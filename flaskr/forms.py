@@ -12,7 +12,7 @@ class RegistrationForm(FlaskForm):
 	country = StringField('Country', 
 		validators=[Length(min=5,max=30)])
 	mobile = StringField('Mobile', 
-		validators=[DataRequired(), Length(min=10,max=30)])
+		validators=[Length(min=10,max=30)])
 	id_passport = StringField('ID / Passport', 
 		validators=[Length(min=10,max=30)])
 	referral_code = StringField('Referral Code', 
@@ -21,11 +21,12 @@ class RegistrationForm(FlaskForm):
 		validators=[DataRequired(), Length(min=5,max=15)])
 	confirm_pass = PasswordField('Confirm Password', 
 		validators=[DataRequired(), Length(min=5,max=15),EqualTo('password')])
-	terms = StringField('Terms & Conditions')
+	terms = StringField('Terms & Conditions',
+		validators=[DataRequired()])
 	submit = SubmitField('Sign Up')
 
 class LoginForm(FlaskForm):
-	email = StringField('Email', 
+	email_address = StringField('Email', 
 		validators=[DataRequired(), Length(min=5,max=15), Email()])
 	password = PasswordField('Password', 
 		validators=[DataRequired(), Length(min=5,max=15)])

@@ -20,7 +20,7 @@ def login():
 @app.route('/signup/', methods=['GET','POST'])
 def signup():
     form = RegistrationForm()
-    return render_template('/auth/signup_1.html', title='Register User', form=form)
+    return render_template('/auth/signup.html', title='Register User', form=form)
 
 @app.route('/verify/')
 def verify_usr():

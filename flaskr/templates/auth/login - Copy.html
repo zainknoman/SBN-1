@@ -1,0 +1,15 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Login Page!</h1>
+<p>this will be the first page of the application</p>
+<p>welcome to login page</p>
+<p><a href="{{url_for('signup')}}">Sign up new!</a></p>
+<p><a href="{{url_for('forgot_pwd')}}">Forgot password?</a></p>
+<p><a href="{{url_for('forgot_usr')}}">Forgot user?</a></p>
+<p><a href="{{url_for('mydashboard')}}">Dashboard page</a></p>
+<p><a href="{{url_for('admin_dash')}}">Admin Dashboard</a></p>
+{% endblock content %}
+
+
