@@ -12,6 +12,8 @@ app.config['SECRET_KEY'] = '65be61ace4c4e656af472288a7202919'
 
 
 @app.route('/')
+def coming_soon():
+    return render_template('/index.html', title='SBN is coming!')
 @app.route('/login/', methods=['GET','POST'])
 def login():
     form = LoginForm()

@@ -18,17 +18,17 @@ class RegistrationForm(FlaskForm):
 	referral_code = StringField('Referral Code', 
 		validators=[Length(min=5,max=15)])
 	password = PasswordField('Password', 
-		validators=[DataRequired(), Length(min=5,max=15)])
+		validators=[DataRequired(), Length(min=8,max=15)])
 	confirm_pass = PasswordField('Confirm Password', 
-		validators=[DataRequired(), Length(min=5,max=15),EqualTo('password')])
+		validators=[DataRequired(), Length(min=8,max=15),EqualTo('password')])
 	terms = StringField('Terms & Conditions',
 		validators=[DataRequired()])
 	submit = SubmitField('Sign Up')
 
 class LoginForm(FlaskForm):
 	email_address = StringField('Email', 
-		validators=[DataRequired(), Length(min=5,max=15), Email()])
+		validators=[DataRequired(), Email()])
 	password = PasswordField('Password', 
-		validators=[DataRequired(), Length(min=5,max=15)])
+		validators=[DataRequired(), Length(min=8,max=15)])
 	remember = BooleanField('Remember Me')
 	submit = SubmitField('Login')

@@ -23,7 +23,7 @@
 
 
             <div class="container register">
-                <form method="POST" action="signup">
+                <form method="POST" action="login">
                     {{ form.hidden_tag() }}
                     <div class="row">
                         <div class="col-md-3 register-left">
@@ -43,22 +43,21 @@
                             
                             <div class="tab-content" id="myTabContent">
                             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                            <h3 class="register-heading">Apply as a SBN Member</h3>
+                            <h3 class="register-heading">Login and get ready !</h3>
                             <div class="row register-form">
                             <div class="col-md-6">
                             <div class="form-group">
                             {{form.email_address(placeholder='Email Address *', class='form-control')}}
                             </div>
                             <div class="form-group">
-                            <!-- {{form.full_name(placeholder='Full Name *', class='form-control')}} -->
+                            <span>&nbsp;</span>
                             </div>
                             <div class="form-group">
-                            {{form.password(placeholder='Password *', class='form-control')}}
+                            <span>&nbsp;</span>
                             </div>
                             <div class="form-group">
-                            <!-- {{form.confirm_pass(placeholder='Confirm Password *', class='form-control')}}
- -->                            </div>
-                            
+                            </div>
+                            <span>&nbsp;</span>
                             </div>
                             <div class="col-md-6">
                             <div class="form-group">
@@ -66,20 +65,23 @@
                             {{form.password(placeholder='Password *', class='form-control')}}
                             </div>
                             <div class="form-group">
-                            
-                            <!-- {{form.mobile(placeholder='Mobile No', class='form-control')}} -->
+                            <span>&nbsp;</span>
                             </div>
                             <div class="form-group">
-                            
-                            <!-- {{form.country(placeholder='Country',class='form-control')}} -->
+                            <span>&nbsp;</span>
                             </div>
                             <div class="form-group">
-                            
-                            <!-- {{form.referral_code(placeholder='Referral Code',class='form-control')}} -->
+                            <span>&nbsp;</span>
                             </div>
+                            <div class="form-group">
                                 <span>&nbsp;</span>
+                            </div> 
+                            <div class="form-group">
+                                <span>&nbsp;</span>
+                            </div> 
+                            <div class="form-group">
                                 <input type="submit" class="btnRegister"  value="Login"/>
-                            
+                            </div>
                             
                             </div>
                             </div>
