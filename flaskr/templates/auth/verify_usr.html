@@ -1,9 +1,49 @@
-{% extends "base.html"%}
-{% block content %}
-	
-<h1>User Verification!</h1>
-<p><a href="{{url_for('login')}}">back to login</a></p>
-<p>welcome your registration is completed and your account is verified!</p>
+{% extends "base_user.html"%}
+{% block content_user %}
 
-{% endblock content %}
+
+<div class="container contact-form">
+    <div class="contact-image">
+        <img src="https://image.ibb.co/kUagtU/rocket_contact.png" alt="rocket_contact"/>
+	</div>
+        <form action="verify">
+            <h3>User Verification</h3>
+
+
+            <div class="row">
+                <div class="col-md-6">
+                        <!-- <div class="form-group">
+                            <input type="text" name="txtName" class="form-control" placeholder="Your Name *" value="" />
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="txtEmail" class="form-control" placeholder="Your Email *" value="" />
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="txtPhone" class="form-control" placeholder="Your Phone Number *" value="" />
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" name="btnSubmit" class="btnContact" value="Send Message" />
+                        </div> -->
+                    <h6 class="mb-4">Dear User, your registeration has been completed and your account is pending at admin for approval process.</h6>
+
+                </div>
+                <div class="col-md-6">
+                        <!-- <div class="form-group">
+                            <textarea name="txtMsg" class="form-control" placeholder="Your Message *" style="width: 100%; height: 150px;"></textarea>
+                        </div> -->
+                        
+                    <div class="form-group">
+                        <h7 class="mb-4">Kindly wait 24 hrs for further procedures.</h7>
+                        <input type="submit" name="btnSubmit" class="btnRegister" value="Login" />
+                            
+                	</div>
+
+            	</div>
+        	</div>
+    	</form>
+            
+</div>
+
+
+{% endblock content_user %}
 

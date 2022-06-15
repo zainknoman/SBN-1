@@ -15,6 +15,8 @@ class RegistrationForm(FlaskForm):
 		validators=[Length(min=10,max=30)])
 	id_passport = StringField('ID / Passport', 
 		validators=[Length(min=10,max=30)])
+	referral_link = StringField('Referral Link', 
+		validators=[Length(min=5,max=15)])
 	referral_code = StringField('Referral Code', 
 		validators=[Length(min=5,max=15)])
 	password = PasswordField('Password', 
@@ -30,5 +32,35 @@ class LoginForm(FlaskForm):
 		validators=[DataRequired(), Email()])
 	password = PasswordField('Password', 
 		validators=[DataRequired(), Length(min=8,max=15)])
-	remember = BooleanField('Remember Me')
+	# remember = BooleanField('Remember Me')
 	submit = SubmitField('Login')
+
+
+class ForgotPwdForm(FlaskForm):
+	email_address = StringField('Email', 
+		validators=[DataRequired(), Email()])
+	submit = SubmitField('Forgot Password')
+
+class ForgotUsrForm(FlaskForm):
+	email_address = StringField('Email', 
+		validators=[DataRequired(), Email()])
+	submit = SubmitField('Forgot Username')
+
+class ProfileForm(FlaskForm):
+	username = StringField('Username', 
+		validators=[DataRequired(), Length(min=5,max=15)])
+	email_address = StringField('Email Address', 
+		validators=[DataRequired(), Email()])
+	full_name = StringField('Full Name', 
+		validators=[DataRequired(), Length(min=5,max=100)])
+	country = StringField('Country', 
+		validators=[Length(min=5,max=30)])
+	mobile = StringField('Mobile', 
+		validators=[Length(min=10,max=30)])
+	id_passport = StringField('ID / Passport', 
+		validators=[Length(min=10,max=30)])
+	referral_link = StringField('Referral Link', 
+		validators=[Length(min=5,max=15)])
+	referral_code = StringField('Referral Code', 
+		validators=[Length(min=5,max=15)])
+	submit = SubmitField('Dashboard')

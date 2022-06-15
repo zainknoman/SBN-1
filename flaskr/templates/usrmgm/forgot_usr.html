@@ -1,11 +1,53 @@
+{% extends "base_user.html"%}
+{% block content_user %}
 
-{% extends "base.html"%}
-{% block content %}
+<div class="container contact-form">
+	<div class="contact-image">
+		<img src="https://image.ibb.co/kUagtU/rocket_contact.png" alt="rocket_contact"/>
+	</div>
+	<form method = "POST" action="">
+		{{ form.hidden_tag() }}
+		<h3>Forgot Username</h3>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<h6 class="mb-4">Please enter your registered email address.</h6>
+					<!-- <input type="text" name="email_address" class="form-control" placeholder="Your Name *" value="" /> -->
+					{{form.email_address(placeholder='Email Address *', class='form-control')}}
+				</div>
+                        <!--<div class="form-group">
+                            <input type="text" name="txtEmail" class="form-control" placeholder="Your Email *" value="" />
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="txtPhone" class="form-control" placeholder="Your Phone Number *" value="" />
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" name="btnSubmit" class="btnContact" value="Send Message" />
+                        </div> -->
+                        
 
-<h1>Forgot user!</h1>
-<p><a href="{{url_for('login')}}">back to login</a></p>
-<p>this page to recover username/email for existing members</p>
-<p>details will be sent to your registered email address with us</p>
+                    </div>
+                    <div class="col-md-6">
+                        <!-- <div class="form-group">
+                            <textarea name="txtMsg" class="form-control" placeholder="Your Message *" style="width: 100%; height: 150px;"></textarea>
+                        </div> -->
+                        <h7 class="mb-4">Your Username will be sent to your registered email address </h7>
+                        <div class="form-group">
+                        	
+                        	<input type="submit" name="ForgotUsr" class="btnSubmit" value="Forgot Username" />
 
-{% endblock content %}
+                        </div>
+
+
+
+
+
+
+
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {% endblock content_user %}
 

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, url_for
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, ForgotPwdForm, ForgotUsrForm
+from flask_pymongo import PyMongo
 
 app = Flask(__name__)
 
@@ -8,6 +9,7 @@ app = Flask(__name__)
 # import secrets
 # secrets.token_hex(16)
 app.config['SECRET_KEY'] = '65be61ace4c4e656af472288a7202919'
+app.config['MONGO_URI'] = "mongodb://localhost:27017/"
 
 
 
@@ -28,17 +30,20 @@ def signup():
 def verify_usr():
     return render_template('/auth/verify_usr.html', title='User Verification')
 
-@app.route('/forgot_pwd/')
+@app.route('/forgot_pwd/', methods=['GET','POST'])
 def forgot_pwd():
-    return render_template('/usrmgm/forgot_pwd.html', title='Forgot Password')
+    form = ForgotPwdForm()
+    return render_template('/usrmgm/forgot_pwd.html', title='Forgot Password', form=form)
 
-@app.route('/forgot_usr/')
+@app.route('/forgot_usr/', methods=['GET','POST'])
 def forgot_usr():
-    return render_template('/usrmgm/forgot_usr.html', title='Forgot User')
+    form = ForgotUsrForm()
+    return render_template('/usrmgm/forgot_usr.html', title='Forgot User', form=form)
 
-@app.route('/change_pwd/')
-def change_pwd():
-    return render_template('/usrmgm/change_pwd.html', title='Change Password')
+@app.route('/profile/', methods=['GET'])
+def profile():
+    form = ProfileForm()
+    return render_template('/usrmgm/profile.html', title='Profile', form=form)
 
 @app.route('/mydashboard/')
 def mydashboard():
