@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for
-from forms import RegistrationForm, LoginForm, ForgotPwdForm, ForgotUsrForm
+from forms import RegistrationForm, LoginForm, ForgotPwdForm, ForgotUsrForm, ProfileForm, AnnouncementsForm
 from flask_pymongo import PyMongo
 
 app = Flask(__name__)
@@ -49,9 +49,14 @@ def profile():
 def mydashboard():
     return render_template('mydashboard.html', title='User Dashboard')
 
-@app.route('/admin_dash/')
-def admin_dash():
+@app.route('/admin_panel/')
+def admin_panel():
     return render_template('/adminpanel/adminpanel.html', title='Admin Dashboard')
+
+@app.route('/announcements/')
+def announcements():
+    return render_template('/adminpanel/announcements.html', title='Announcements')
+
 
 
 if __name__ == '__main__':

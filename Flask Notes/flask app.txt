@@ -1,0 +1,17 @@
+add below code in <proj_name>.py class inside flaskr folder
+
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+@app.route('/login/')
+def login():
+    return render_template('login.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+Run through python in debug mode
+activate env and goto flaskr folder to run (python <proj_name>.py)
+

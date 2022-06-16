@@ -1,0 +1,43 @@
+install python / pip / upgrade pip
+create project folder
+create virtual env inside cd project folder (py -3 -m venv <name of venv>)
+activate venv (cd Scripts> activate)
+remain in Scripts folder and upgrade pip (python -m pip install --upgrade pip)
+remain in Scripts folder and (pip install flask)
+python --version
+pip --version
+flask --version
+folder structure
+project folder
+- flaskr (all .py files including models/db/main.py)
+-- static (for style.css or images)
+-- templates (for html) further folders might be added
+/home/user/Projects/ProjectFolder
+├── flaskr/
+│   ├── __init__.py
+│   ├── db.py
+│   ├── schema.sql
+│   ├── auth.py
+│   ├── blog.py
+│   ├── templates/
+│   │   ├── base.html
+│   │   ├── auth/
+│   │   │   ├── login.html
+│   │   │   └── register.html
+│   │   └── blog/
+│   │       ├── create.html
+│   │       ├── index.html
+│   │       └── update.html
+│   └── static/
+│       └── style.css
+├── tests/
+│   ├── conftest.py
+│   ├── data.sql
+│   ├── test_factory.py
+│   ├── test_db.py
+│   ├── test_auth.py
+│   └── test_blog.py
+├── venv/
+├── setup.py
+└── MANIFEST.in
+

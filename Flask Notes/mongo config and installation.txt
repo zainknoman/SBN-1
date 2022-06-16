@@ -1,0 +1,47 @@
+install mongodb from msi
+create data->db folders
+change C:\Program Files\MongoDB\Server\5.0\bin\mongod.cfg
+dbPath: E:\data (to above data location)
+
+
+install mongosh (shell) from msi
+cd to mongodbserver/bin
+mongosh (enter)
+show dbs (to show all dbs)
+use mydb (to create mydb)
+db (show current db)
+
+show collections (list all collections)
+
+db.createCollection("<Collection_Name>")
+
+insert document in collection:
+db.<Collection_Name>.insertOne({name:"Alice",age:34})
+
+insert multiple documents in collection:
+db.<Collection_Name>.insertMany([{name:"ali":age:24},{name:"Sara":age:21}])
+
+get collection document:
+db.<Collection_Name>.find(d).pretty()
+
+update collection document:
+db.<Collection_Name>.find().pretty()
+db.<Collection_Name>.updateOne({'name':'ali'},{$set:{'name':'New Employee'}})
+
+db.<Collection_Name>.drop()
+
+db.dropDatabase()
+
+
+{username:"hayyan",email_address:"fagholic@gmail.com",full_name:"Hayyan Mustafa",country:null,mobile:null,id_passport:null,referral_link:null,referral_code:"4cdca3fa",password:"sbn123",is_admin:false,created_date:new Date(),is_approved:false,is_active:false,withdraw_wallet:0},
+{username:"admin",email_address:"admin@sbn.com",full_name:"Administrator",country:"CANADA",mobile:null,id_passport:null,referral_link:null,referral_code:null,password:"admin123",is_admin:true,created_date:new Date(),is_approved:true,is_active:true,withdraw_wallet:0}
+
+adding column with future day
+ db.sbn_users.aggregate([{$project:{active_date:{$dateAdd:{startDate:'$created_date',unit:'day',amount:7}}}},{$merge:'sbn_users'}])
+
+
+
+
+
+
+
