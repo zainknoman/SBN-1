@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 class RegistrationForm(FlaskForm):
@@ -47,4 +47,21 @@ class AnnouncementsForm(FlaskForm):
 	createdDate = StringField('Created On', validators=[])
 	announcements = StringField('Announcements', validators=[DataRequired()])
 	isactive = BooleanField('Status', validators=[])
+	submit = SubmitField('Impact')
+
+class PackageConfigForm(FlaskForm):
+	createdDate = StringField('Created On', validators=[])
+	package_id = StringField('Package Id', validators=[DataRequired()])
+	package = IntegerField('Package Amount', validators=[DataRequired(), Length(min=3,max=5)])
+	submit = SubmitField('Add')
+
+class RewardConfigForm(FlaskForm):
+	createdDate = StringField('Created On', validators=[])
+	reward = StringField('Reward Type')
+	percentage = IntegerField('Reward Percentage', validators=[DataRequired(), Length(min=1,max=2)])
+	submit = SubmitField('Impact')
+
+class WalletConfigForm(FlaskForm):
+	createdDate = StringField('Updated On', validators=[])
+	sbn_wallet = StringField('SBN Wallet', validators=[DataRequired()])
 	submit = SubmitField('Impact')

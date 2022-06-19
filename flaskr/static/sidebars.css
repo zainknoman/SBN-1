@@ -14,11 +14,11 @@ main {
   height: -webkit-fill-available;
   max-height: 100vh;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
 }
 
 .b-example-divider {
-  flex-shrink: 0;
+  /*flex-shrink: 0;*/
   width: 1.5rem;
   height: 100vh;
   background-color: rgba(0, 0, 0, .1);

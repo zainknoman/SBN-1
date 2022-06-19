@@ -1,5 +1,5 @@
 from flask import Flask, render_template, url_for
-from forms import RegistrationForm, LoginForm, ForgotPwdForm, ForgotUsrForm, ProfileForm, AnnouncementsForm
+from forms import RegistrationForm, LoginForm, ForgotPwdForm, ForgotUsrForm, ProfileForm, AnnouncementsForm, PackageConfigForm, RewardConfigForm, WalletConfigForm
 from flask_pymongo import PyMongo
 
 app = Flask(__name__)
@@ -53,10 +53,35 @@ def mydashboard():
 def admin_panel():
     return render_template('/adminpanel/adminpanel.html', title='Admin Dashboard')
 
-@app.route('/announcements/')
+@app.route('/announcements/', methods=['GET','POST'])
 def announcements():
-    return render_template('/adminpanel/announcements.html', title='Announcements')
+    form = AnnouncementsForm()
+    return render_template('/adminpanel/announcements.html', title='Announcements', form=form)
 
+@app.route('/user_settings/', methods=['GET','POST'])
+def user_settings():
+    form = RegistrationForm()
+    return render_template('/adminpanel/users_activation.html', title='User Settings', form=form)
+
+@app.route('/package_config/', methods=['GET','POST'])
+def package_config():
+    form = PackageConfigForm()
+    return render_template('/adminpanel/config/package_config.html', title='Package Config', form=form)
+
+@app.route('/reward_config/', methods=['GET','POST'])
+def reward_config():
+    form = RewardConfigForm()
+    return render_template('/adminpanel/config/reward_config.html', title='Reward Config', form=form)
+
+@app.route('/wallet_config/', methods=['GET','POST'])
+def wallet_config():
+    form = WalletConfigForm()
+    return render_template('/adminpanel/config/wallet_config.html', title='Wallet Config', form=form)
+
+@app.route('/jackpot/', methods=['GET','POST'])
+def jackpot():
+    # form = WalletConfigForm()
+    return render_template('/adminpanel/jackpot.html', title='Jackpot')
 
 
 if __name__ == '__main__':

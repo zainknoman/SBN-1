@@ -1,0 +1,103 @@
+{% extends "base_admin.html"%}
+{% block content_admin %}
+
+
+
+<div class="card">
+  <div class="card-header">
+    <h3>SBN Rewards Configurations</h3>
+  </div>
+  <div class="card-body">
+    <form>
+     
+     <div class="row">
+      <div class="col-sm-2">
+       {{form.reward.label(class='form-control')}}
+     </div>
+     <div class="col-sm-5">
+       {{form.percentage(placeholder='Enter SBN reward percentage here !', class='form-control')}}
+     </div>
+     <div class="col-sm-1">
+       %
+     </div>
+     <div class="col-sm-2">
+       <button type="submit" class="btn btn-danger mb-2">Impact</button>
+     </div>
+   </div>
+ </form>
+</div>
+</div>
+
+
+<div class="card scrol scrollbar-cyan thin">
+  <div class="card-body">
+  	<h5 class="card-title">Weekly Rewards Configurations</h5>
+    <table class="table table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Updated On</th>
+          <th scope="col">Percentage</th>
+          <th scope="col">Modify</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td>2022-06-15</td>
+          <td>7</td>
+          <td><button type="button" class="btn btn-primary">Load</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <h5 class="card-title">Monthly Rewards Configurations</h5>
+    <table class="table table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Updated On</th>
+          <th scope="col">Percentage</th>
+          <th scope="col">Modify</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td>2022-06-16</td>
+          <td>7</td>
+          <td><button type="button" class="btn btn-primary">Load</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <h5 class="card-title">Direct Member Rewards Configurations</h5>
+    <table class="table table-hover">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Updated On</th>
+          <th scope="col">Percentage</th>
+          <th scope="col">Modify</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td>2022-06-15</td>
+          <td>7</td>
+          <td><button type="button" class="btn btn-primary">Load</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+{% endblock content_admin %}
+
