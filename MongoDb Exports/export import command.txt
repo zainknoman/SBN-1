@@ -1,0 +1,4 @@
+from cmd shell (using mongodb tools installed and env variable is set)
+mongoexport --collection=<collection> --db=<dbname> --output=<filename>.json
+
+retrieve files from user -> documents

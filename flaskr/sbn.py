@@ -78,6 +78,17 @@ def wallet_config():
     form = WalletConfigForm()
     return render_template('/adminpanel/config/wallet_config.html', title='Wallet Config', form=form)
 
+@app.route('/weekly_reward/', methods=['GET','POST'])
+def weekly_reward():
+    form = RewardConfigForm()
+    return render_template('/adminpanel/dashboard/weekly_rewards.html', title='Weekly Rewards', form=form)
+
+@app.route('/direct_reward/', methods=['GET','POST'])
+def direct_reward():
+    reg_form = RegistrationForm()
+    reward_form = RewardConfigForm()
+    return render_template('/adminpanel/dashboard/direct_rewards.html', title='Direct Rewards', reg_form=reg_form, reward_form=reward_form)
+
 @app.route('/jackpot/', methods=['GET','POST'])
 def jackpot():
     # form = WalletConfigForm()

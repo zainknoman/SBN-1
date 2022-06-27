@@ -5,27 +5,25 @@
 
 <div class="card">
 	<div class="card-header">
-		<h3>Member Approval / Activation</h3>
+		<h3>Direct Member Rewards Giveaway</h3>
 	</div>
 	<div class="card-body">
 		<form>
 
 			<div class="row">
-				<div class="col-sm-2">
-					{{form.username.label(class='form-control', placeholder='Username')}}
+				<div class="col-sm-3">
+					Direct member reward @
 				</div>
 				<div class="col-sm-3">
-					{{form.full_name.label(class='form-control', placeholder='Full Name')}}
+					{{reward_form.percentage(placeholder='', class='form-control')}}
 				</div>
-				<div class="col-sm-4">
-					{{form.email_address.label(class='form-control', placeholder='Email@address.com')}}
+				<div class="col-sm-1">
+					%
 				</div>
-				<div class="col-sm-1" >
-					<button type="submit" class="btn btn-primary mb-2">Approve</button>
+				<div class="col-sm-2" >
+					<button type="submit" class="btn btn-danger mb-2">Impact to all referrals</button>
 				</div>
-				<div class="col-sm-1" >
-					<button type="submit" class="btn btn-success mb-2">Activate</button>
-				</div>
+				
 			</div>
 		</form>
 	</div>
@@ -34,7 +32,7 @@
 <div class="card scrol scrollbar-cyan thin">
 	
 	<div class="card-body">
-		<h5 class="card-title">Member List</h5>
+		<h5 class="card-title">Direct Member List (Activated)</h5>
 		<table class="table table-hover">
 			<thead class="thead-light">
 				<tr>
@@ -42,9 +40,9 @@
 					<th scope="col">Created On</th>
 					<th scope="col-auto">Activation Date</th>
 					<th scope="col">Username</th>
-					<th scope="col">Approve</th>
-					<th scope="col">Active</th>
-					<th scope="col">Modify</th>
+					<th scope="col">Package</th>
+					<th scope="col">Referral</th>
+					
 				</tr>
 			</thead>
 			<tbody>
@@ -53,27 +51,25 @@
 					<td>2022-06-7</td>
 					<td>2022-06-14</td>
 					<td class='col-auto'>hayyan</td>
-					<td>False</td>
-					<td>False</td>
-					<td><button type="button" class="btn btn-primary">Load</button></td>
+					<td>pkg500</td>
+					<td>6lke9871</td>
+					
 				</tr>
 				<tr>
 					<th scope="row">2</th>
 					<td>2022-06-8</td>
 					<td>2022-06-15</td>
 					<td class='col-auto'>zain.noman</td>
-					<td>True</td>
-					<td>False</td>
-					<td><button type="button" class="btn btn-primary">Load</button></td>
+					<td>pkg1500</td>
+					<td>m5ke6771</td>
 				</tr>
 				<tr>
 					<th scope="row">3</th>
 					<td>2022-06-8</td>
 					<td>2022-06-15</td>
 					<td class='col-auto'>ahmed2022</td>
-					<td>False</td>
-					<td>False</td>
-					<td><button type="button" class="btn btn-primary">Load</button></td>
+					<td>pkg3000</td>
+					<td>1poqbbn4</td>
 				</tr>
 
 			</tbody>

@@ -1,0 +1,6 @@
+{"_id":{"$oid":"629fc86788782796720ad00a"},"package_id":"pkg500","package":500,"package_date":{"$date":"2022-06-07T21:51:35.824Z"}}
+{"_id":{"$oid":"629fc86788782796720ad00b"},"package_id":"pkg1000","package":1000,"package_date":{"$date":"2022-06-07T21:51:35.824Z"}}
+{"_id":{"$oid":"629fc86788782796720ad00c"},"package_id":"pkg1500","package":1500,"package_date":{"$date":"2022-06-07T21:51:35.824Z"}}
+{"_id":{"$oid":"629fc86788782796720ad00d"},"package_id":"pkg2000","package":2000,"package_date":{"$date":"2022-06-07T21:51:35.824Z"}}
+{"_id":{"$oid":"629fc86788782796720ad00e"},"package_id":"pkg2500","package":2500,"package_date":{"$date":"2022-06-07T21:51:35.824Z"}}
+{"_id":{"$oid":"629fc86788782796720ad00f"},"package_id":"pkg3000","package":3000,"package_date":{"$date":"2022-06-07T21:51:35.824Z"}}
