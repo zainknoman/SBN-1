@@ -10,12 +10,14 @@ app = Flask(__name__)
 # secrets.token_hex(16)
 app.config['SECRET_KEY'] = '65be61ace4c4e656af472288a7202919'
 app.config['MONGO_URI'] = "mongodb://localhost:27017/"
-
+# app.config["CACHE_TYPE"] = "null" 
 
 
 @app.route('/')
-def coming_soon():
+@app.route('/index/')
+def index():
     return render_template('/index.html', title='SBN is coming!')
+    
 @app.route('/login/', methods=['GET','POST'])
 def login():
     form = LoginForm()
@@ -45,9 +47,14 @@ def profile():
     form = ProfileForm()
     return render_template('/usrmgm/profile.html', title='Profile', form=form)
 
+# @app.route('/mydashboard/')
+# def mydashboard():
+#     return render_template('mydashboard.html', title='User Dashboard')
+
+
 @app.route('/mydashboard/')
 def mydashboard():
-    return render_template('mydashboard.html', title='User Dashboard')
+    return render_template('dashboard.html', title='User Dashboard')
 
 @app.route('/admin_panel/')
 def admin_panel():
@@ -83,6 +90,11 @@ def weekly_reward():
     form = RewardConfigForm()
     return render_template('/adminpanel/dashboard/weekly_rewards.html', title='Weekly Rewards', form=form)
 
+@app.route('/monthly_reward/', methods=['GET','POST'])
+def monthly_reward():
+    form = RewardConfigForm()
+    return render_template('/adminpanel/dashboard/monthly_rewards.html', title='Monthly Rewards', form=form)
+
 @app.route('/direct_reward/', methods=['GET','POST'])
 def direct_reward():
     reg_form = RegistrationForm()
@@ -91,8 +103,8 @@ def direct_reward():
 
 @app.route('/jackpot/', methods=['GET','POST'])
 def jackpot():
-    # form = WalletConfigForm()
-    return render_template('/adminpanel/jackpot.html', title='Jackpot')
+    reg_form = RegistrationForm()
+    return render_template('/adminpanel/dashboard/jackpot.html', title='Jackpot', reg_form=reg_form)
 
 
 if __name__ == '__main__':
