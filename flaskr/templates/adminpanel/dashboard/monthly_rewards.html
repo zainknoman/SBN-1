@@ -40,16 +40,23 @@
 				<tr>
 					<th colspan="8">
 						<div class="dropdown" align="right">
-							<button class="btn btn-primary  dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-								Select Package
-							</button>
-							<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-								<li><a class="dropdown-item" href="#">pkg500</a></li>
-								<li><a class="dropdown-item" href="#">pkg1000</a></li>
-								<li><a class="dropdown-item" href="#">pkg1500</a></li>
-								<li><a class="dropdown-item" href="#">pkg3000</a></li>
-								<li><a class="dropdown-item" href="#">pkg5000</a></li>
-							</ul>
+							<form>
+								<button class="btn btn-primary  dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+									Select Package
+								</button>
+
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+									{% for pkg in sbn_packages %}
+									<li>
+										<button  type="button" id="{{pkg.package}}">
+											{{pkg.package_id}}
+										</button>
+										<!-- <a class="dropdown-item" href="#">{{pkg.package_id}}</a> -->
+									</li>
+									{% endfor %}
+
+								</ul>
+							</form>
 						</div>
 					</th>
 				</tr>
@@ -64,38 +71,29 @@
 				</tr>
 			</thead>
 			<tbody>
-				
+				<form>
+				{% for usr in sbn_monthly %}
+				{% if usr.is_admin == false and usr.is_active == true %}
 				<tr>
-					<th scope="row">1</th>
-					<td>2022-06-7</td>
-					<td>2022-06-14</td>
-					<td class='col-auto'>hayyan</td>
-					<td>Hayyan Mustafa</td>
-					<td>pkg500</td>
+					<th scope="row">{{loop.index}}</th>
+					<td>{{usr.created_date}}</td>
+					<td>{{usr.active_date}}</td>
+					<td class='col-auto'>{{usr.username}}</td>
+					<td>{{usr.full_name}}</td>
+					<td>
+						{% for pkg in usr.packages %}
+						{{pkg.package_id}}<br>
+						{% endfor %}
+					</td>
 					<td>
 						<div class="form-check mb-2">
-							<input class="form-check-input" type="checkbox" id="autoSizingCheck">
+							<input class="form-check-input" type="checkbox" id="{{usr._id}}">
 						</div>
 					</td>
 				</tr>
-				<tr>
-					<th scope="row">2</th>
-					<td>2022-06-8</td>
-					<td>2022-06-15</td>
-					<td class='col-auto'>zain.noman</td>
-					<td>Zain Noman Kamali</td>
-					<td>pkg1500</td>
-					<td><input class="form-check-input" type="checkbox" id="autoSizingCheck"></td>
-				</tr>
-				<tr>
-					<th scope="row">3</th>
-					<td>2022-06-8</td>
-					<td>2022-06-15</td>
-					<td class='col-auto'>ahmed2022</td>
-					<td>Muhammad Ahmed</td>
-					<td>pkg3000</td>
-					<td><input class="form-check-input" type="checkbox" id="autoSizingCheck"></td>
-				</tr>
+				{% endif %}
+				{% endfor %}
+				</form>
 
 			</tbody>
 		</table>

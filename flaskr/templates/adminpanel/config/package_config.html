@@ -23,7 +23,7 @@
 </div>
 </div>
 
-
+<form method="GET" action="/">
 <div class="card scrol scrollbar-cyan thin">
   <div class="card-body">
    <h5 class="card-title">Package List</h5>
@@ -37,47 +37,22 @@
       </tr>
     </thead>
     <tbody>
+      {% set ns = namespace(i=0) %}
+      {% for pkg in pkg_sbn %}
+      {% set ns.i = ns.i +1 %}
       <tr>
-        <th scope="row">1</th>
-        <td>2022-06-7</td>
-        <td class='col-auto'>pkg500</td>
-        <td>500</td>
+        <th scope="row">{{ns.i}}</th>
+        <td>{{pkg.package_date}}</td>
+        <td class='col-auto'>{{pkg.package}}</td>
+        <td>{{pkg.package_id}}</td>
       </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>2022-06-7</td>
-        <td class='col-auto'>pkg1000</td>
-        <td>1000</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td>2022-06-7</td>
-        <td class='col-auto'>pkg3000</td>
-        <td>3000</td>
-      </tr>
-      <tr>
-        <th scope="row">4</th>
-        <td>2022-06-7</td>
-        <td class='col-auto'>pkg5000</td>
-        <td>5000</td>
-      </tr>
-      <tr>
-        <th scope="row">5</th>
-        <td>2022-06-7</td>
-        <td class='col-auto'>pkg10000</td>
-        <td>10000</td>
-      </tr>
-      <tr>
-        <th scope="row">6</th>
-        <td>2022-06-7</td>
-        <td class='col-auto'>pkg25000</td>
-        <td>25000</td>
-      </tr>
+      {% endfor %}
+      
     </tbody>
   </table>
 </div>
 </div>
-
+</form>
 
 {% endblock content_admin %}
 

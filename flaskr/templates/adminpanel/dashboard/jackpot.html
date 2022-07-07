@@ -11,8 +11,8 @@
     <form>
 
       <div class="row">
-        <div class="col-sm-2">
-          Please enter
+        <div class="col-sm-3">
+          <label  class="form-label" >Please enter for (username)</label>
         </div>
         <div class="col-sm-3">
           <input type="text-box" class="form-control">
@@ -20,7 +20,7 @@
         <div class="col-sm-3">
           x package amount
         </div>
-        <div class="col-sm-3" >
+        <div class="col-sm-2" >
           <button type="submit" class="btn btn-danger mb-2">Jackpot Launcher</button>
         </div>
         
@@ -42,33 +42,29 @@
           <th scope="col">Username</th>
           <th scope="col">Full Name</th>
           <th scope="col">Package</th>
+          <th scope="col">Select</th>
         </tr>
       </thead>
       <tbody>
+        {% for sbn in sbn_jackpot %}
+        {% if sbn.is_admin == false and sbn.is_active == true %}
         <tr>
-          <th scope="row">1</th>
-          <td>2022-06-7</td>
-          <td>2022-06-14</td>
-          <td class='col-auto'>hayyan</td>
-          <td>Hayyan Mustafa</td>
-          <td>pkg500</td>
+          <th scope="row">{{loop.index}}</th>
+          <td>{{sbn.created_date}}</td>
+          <td>{{sbn.active_date}}</td>
+          <td class='col-auto'>{{sbn.username}}</td>
+          <td>{{sbn.full_name}}</td>
+          
+          <td>
+              {% for pkg in sbn.packages %}
+              {{pkg.package_id}}<br>
+              {% endfor %}
+          </td>
+          
+          <td><button type="submit" class="btn btn-primary mb-2" value="{{sbn._id}}">Load</button></td>
         </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>2022-06-8</td>
-          <td>2022-06-15</td>
-          <td class='col-auto'>zain.noman</td>
-          <td>Zain Noman Kamali</td>
-          <td>pkg1500</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td>2022-06-8</td>
-          <td>2022-06-15</td>
-          <td class='col-auto'>ahmed2022</td>
-          <td>Muhammad Ahmed</td>
-          <td>pkg3000</td>
-        </tr>
+        {% endif %}
+        {% endfor %}
 
       </tbody>
     </table>

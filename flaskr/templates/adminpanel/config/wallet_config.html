@@ -27,6 +27,7 @@
 <div class="card scrol scrollbar-cyan thin">
   <div class="card-body">
     <h5 class="card-title">Record List</h5>
+    <form method="GET" action="/">
     <table class="table table-hover">
       <thead class="thead-light">
         <tr>
@@ -37,15 +38,17 @@
         </tr>
       </thead>
       <tbody>
+        {% for sbn in sbn_wallet %}
         <tr>
           <th scope="row">1</th>
-          <td>2022-06-15</td>
-          <td>65be61ace4c4e656af</td>
-          <td><button type="button" class="btn btn-primary">Load</button></td>
+          <td>{{sbn.updatedDate}}</td>
+          <td>{{sbn.wallet}}</td>
+          <td><button type="button" class="btn btn-primary" value="{{sbn._id}}">Load</button></td>
         </tr>
-        
+        {% endfor %}
       </tbody>
     </table>
+  </form>
   </div>
 </div>
 

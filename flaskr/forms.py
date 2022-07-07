@@ -2,6 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
+
+
 class RegistrationForm(FlaskForm):
 	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
 	email_address = StringField('Email Address', validators=[DataRequired(), Email()])
@@ -44,6 +46,7 @@ class ProfileForm(FlaskForm):
 	submit = SubmitField('Impact')
 
 class AnnouncementsForm(FlaskForm):
+	
 	createdDate = StringField('Created On', validators=[])
 	announcements = StringField('Announcements', validators=[DataRequired()])
 	isactive = BooleanField('Status', validators=[])

@@ -28,7 +28,7 @@
 </div>
 </div>
 
-
+<form method="GET" action="/">
 <div class="card scrol scrollbar-cyan thin">
   <div class="card-body">
   	<h5 class="card-title">Weekly Rewards Configurations</h5>
@@ -42,11 +42,12 @@
         </tr>
       </thead>
       <tbody>
+       
         <tr>
           <th scope="row">1</th>
-          <td>2022-06-15</td>
-          <td>7</td>
-          <td><button type="button" class="btn btn-primary">Load</button></td>
+          <td>{{reward_weekly.createdDate}}</td>
+          <td>{{reward_weekly.percentage}}</td>
+          <td><button type="button" class="btn btn-primary" value="{{reward_weekly._id}}">Load</button></td>
         </tr>
       </tbody>
     </table>
@@ -61,12 +62,16 @@
         </tr>
       </thead>
       <tbody>
+       
         <tr>
           <th scope="row">1</th>
-          <td>2022-06-16</td>
-          <td>7</td>
-          <td><button type="button" class="btn btn-primary">Load</button></td>
+         
+          <td>{{reward_monthly.createdDate}}</td>
+          <td>{{reward_monthly.percentage}}</td>
+          <td><button type="button" class="btn btn-primary" value="{{reward_monthly._id}}">Load</button></td>
+         
         </tr>
+       
       </tbody>
     </table>
     <h5 class="card-title">Direct Member Rewards Configurations</h5>
@@ -80,17 +85,21 @@
         </tr>
       </thead>
       <tbody>
+        
         <tr>
           <th scope="row">1</th>
-          <td>2022-06-15</td>
-          <td>7</td>
-          <td><button type="button" class="btn btn-primary">Load</button></td>
+          
+          <td>{{reward_member.createdDate}}</td>
+          <td>{{reward_member.percentage}}</td>
+          <td><button type="button" class="btn btn-primary" value="{{reward_member._id}}">Load</button></td>
+          
         </tr>
+        
       </tbody>
     </table>
   </div>
 </div>
-
+</form>
 
 
 

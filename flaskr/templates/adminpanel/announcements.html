@@ -36,7 +36,7 @@
 
 
 
-
+<form method="GET" action="/">
 <div class="card scrol scrollbar-cyan thin">
   <div class="card-body">
     <h5 class="card-title">Announcement List</h5>
@@ -51,33 +51,28 @@
         </tr>
       </thead>
       <tbody>
+        {% set ns = namespace(i = 0) %}
+        {% for ann in sbn_ann %}
         <tr>
-          <th scope="row">1</th>
-          <td>2022-06-14</td>
-          <td class='col-auto'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</td>
+          {% set ns.i = ns.i +1 %}
+          <th scope="row">{{ns.i}}</th>
+          <td>{{ann.createdDate}}</td>
+          <td class='col-auto'>{{ann.announcement}}</td>
+          {% if ann.isactive == 1 %}
           <td>True</td>
-          <td><button type="button" class="btn btn-primary">Load</button></td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>2022-06-15</td>
-          <td class='col-auto'>Vestibulum id ligula porta felis euismod semper eget lacinia odio sem.
-          Donec id elit non mi porta gravida at eget metus.</td>
-          <td>True</td>
-          <td><button type="button" class="btn btn-primary">Load</button></td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td>2022-06-16</td>
-          <td class='col-auto'>Etiam porta sem malesuada magna mollis euismod.</td>
+          {% else %}
           <td>False</td>
-          <td><button type="button" class="btn btn-primary">Load</button></td>
+          {% endif %}
+          <td><button type="button" class="btn btn-primary" value="{{ann._id}}">Load</button></td>
+          
         </tr>
+        {% endfor %}
+        
       </tbody>
     </table>
   </div>
 </div>
-
+</form>
 
 {% endblock content_admin %}
 

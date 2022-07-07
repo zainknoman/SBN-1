@@ -34,7 +34,8 @@ db.dropDatabase()
 
 
 {username:"hayyan",email_address:"fagholic@gmail.com",full_name:"Hayyan Mustafa",country:null,mobile:null,id_passport:null,referral_link:null,referral_code:"4cdca3fa",password:"sbn123",is_admin:false,created_date:new Date(),is_approved:false,is_active:false,withdraw_wallet:0},
-{username:"admin",email_address:"admin@sbn.com",full_name:"Administrator",country:"CANADA",mobile:null,id_passport:null,referral_link:null,referral_code:null,password:"admin123",is_admin:true,created_date:new Date(),is_approved:true,is_active:true,withdraw_wallet:0}
+{username:"admin",email_address:"admin@sbn.com",full_name:"Administrator",country:"CANADA",mobile:null,id_passport:null,referral_link:null,referral_code:null,password:"admin123",is_admin:true,created_date:new Date(),is_approved:true,is_active:true,withdraw_wallet:0},
+{username:"zafar",email_address:"zafar@hotmail.com",full_name:"Muhammad Zafar",country:null,mobile:null,id_passport:null,referral_link:"4cdca3fa",referral_code:"5dbae9La",password:"sbn123",is_admin:false,created_date:new Date(),is_approved:true,is_active:true,withdraw_wallet:0}
 
 adding column with future day
  db.sbn_users.aggregate([{$project:{active_date:{$dateAdd:{startDate:'$created_date',unit:'day',amount:7}}}},{$merge:'sbn_users'}])
