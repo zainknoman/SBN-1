@@ -1,7 +1,8 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request
 from forms import RegistrationForm, LoginForm, ForgotPwdForm, ForgotUsrForm, ProfileForm, AnnouncementsForm, PackageConfigForm, RewardConfigForm, WalletConfigForm
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -80,8 +81,18 @@ def user_settings():
 @app.route('/package_config/', methods=['GET','POST'])
 def package_config():
     form = PackageConfigForm()
+    if request.method == 'POST':
+        pkg = form.package.data
+        pkg_id = 'pkg'+str(pkg)
+        pkg_date = datetime.today().replace(microsecond=0)
+        # print(pkg_id)
+        if pkg != "" and pkg_id != "": 
+            dal.sbn_packages.insert_one({'package': pkg, 'package_id': pkg_id, 'package_date':pkg_date})
+    
     pkg_sbn = dal.sbn_packages.find()
     return render_template('/adminpanel/config/package_config.html', title='Package Config', pkg_sbn=pkg_sbn, form=form)
+    
+        
 
 @app.route('/reward_config/', methods=['GET','POST'])
 def reward_config():
