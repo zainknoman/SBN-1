@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, HiddenField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
@@ -54,9 +54,10 @@ class AnnouncementsForm(FlaskForm):
 
 class PackageConfigForm(FlaskForm):
 	createdDate = StringField('Created On', validators=[])
-	package_id = StringField('Package Id', validators=[DataRequired()])
-	package = IntegerField('Package Amount', validators=[DataRequired(), Length(min=3,max=5)])
-	submit = SubmitField('Add')
+	package_id = StringField('Package Id')
+	package = StringField('Package Amount', validators=[DataRequired(), Length(min=3,max=5)])
+	submit = SubmitField('Add Package')
+
 
 class RewardConfigForm(FlaskForm):
 	createdDate = StringField('Created On', validators=[])
@@ -67,4 +68,6 @@ class RewardConfigForm(FlaskForm):
 class WalletConfigForm(FlaskForm):
 	createdDate = StringField('Updated On', validators=[])
 	sbn_wallet = StringField('SBN Wallet', validators=[DataRequired()])
+	wallet_hidden = HiddenField()
 	submit = SubmitField('Impact')
+	load = SubmitField('Load')

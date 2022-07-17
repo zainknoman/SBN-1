@@ -8,15 +8,19 @@
     <h3>SBN Wallet Configurations</h3>
   </div>
   <div class="card-body">
-    <form>
-     
+    <form method="POST" onSubmit="return confirm('Are you sure to update the SBN Wallet?');">
+     {{ form.csrf_token }}
      <div class="row">
       <div class="col-sm-8">
        
        {{form.sbn_wallet(placeholder='Enter SBN Wallet here !', class='form-control')}}
      </div>
      <div class="col-sm-2">
-       <button type="submit" class="btn btn-danger mb-2">Impact</button>
+      
+        
+        <!-- <button type="submit" class="btn btn-danger mb-2">Impact</button> -->
+        {{form.submit(class='btn btn-danger')}}
+      
      </div>
    </div>
  </form>
@@ -27,7 +31,7 @@
 <div class="card scrol scrollbar-cyan thin">
   <div class="card-body">
     <h5 class="card-title">Record List</h5>
-    <form method="GET" action="/">
+    
     <table class="table table-hover">
       <thead class="thead-light">
         <tr>
@@ -43,12 +47,19 @@
           <th scope="row">1</th>
           <td>{{sbn.updatedDate}}</td>
           <td>{{sbn.wallet}}</td>
-          <td><button type="button" class="btn btn-primary" value="{{sbn._id}}">Load</button></td>
+          <td>
+            <!-- <button type="button" class="btn btn-primary" value="{{sbn._id}}">Load</button> -->
+            <form method="POST" action="{{ url_for('wallet_config', id=sbn.wallet) }}">
+              {{form.load(class='btn btn-primary')}}
+            <!-- <input type="submit" class="btn btn-primary" value="Load")"> -->
+          </form>
+          
+          </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-  </form>
+    
   </div>
 </div>
 

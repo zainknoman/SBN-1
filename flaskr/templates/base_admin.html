@@ -178,8 +178,25 @@
 
   <div class="container">
 
-
-
+    
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <ul >
+        {% for category, message in messages %}
+        {% if category == 'success' %}
+        <li class="alert alert-success alert-dismissible fade show">{{ message }}</li>
+        {% endif %}
+        {% if category == 'error' %}
+        <li class="alert alert-warning"><strong>Error:</strong> {{ message }}</li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% endwith %}
+      
+    <!-- {% if error %}
+      <p class="alert alert-warning"><strong>Error:</strong> {{ error }}
+    {% endif %} -->
     {% block content_admin %} {% endblock %}
 
 

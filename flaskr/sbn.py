@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, flash, redirect
 from forms import RegistrationForm, LoginForm, ForgotPwdForm, ForgotUsrForm, ProfileForm, AnnouncementsForm, PackageConfigForm, RewardConfigForm, WalletConfigForm
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
@@ -77,22 +77,43 @@ def announcements():
 def user_settings():
     form = RegistrationForm()
     return render_template('/adminpanel/users_activation.html', title='User Settings', form=form)
-
+# ********** PACKAGE START***********
 @app.route('/package_config/', methods=['GET','POST'])
 def package_config():
     form = PackageConfigForm()
-    if request.method == 'POST':
-        pkg = form.package.data
-        pkg_id = 'pkg'+str(pkg)
-        pkg_date = datetime.today().replace(microsecond=0)
-        # print(pkg_id)
-        if pkg != "" and pkg_id != "": 
-            dal.sbn_packages.insert_one({'package': pkg, 'package_id': pkg_id, 'package_date':pkg_date})
-    
+    if request.method == "POST":
+        if form.validate_on_submit():
+        # if request.form["btn_submit"] == "add_package":
+            if form.submit.data:
+                pkg = form.package.data
+                pkg_id = 'pkg'+str(pkg)
+                # pkg_date = datetime.now()
+                # pkg_date = pkg_date.strftime("%x %X")
+                pkg_date = datetime.now().replace(microsecond=0)
+                if pkg != "" and pkg_id != "":
+                    pkg_find = dal.sbn_packages.find_one({'package_id':pkg_id})
+                    if pkg_find:
+                        # error = "Package already exists "+pkg_id
+                        flash("Package already exists "+pkg_id,"error")
+                        
+                    else:
+                        dal.sbn_packages.insert_one({'package': pkg, 'package_id': pkg_id, 'package_date':pkg_date})
+                        flash("Package added "+pkg_id, "success")
+                else:
+                    flash("Please enter package","error")
+            
     pkg_sbn = dal.sbn_packages.find()
-    return render_template('/adminpanel/config/package_config.html', title='Package Config', pkg_sbn=pkg_sbn, form=form)
-    
-        
+    return render_template('/adminpanel/config/package_config.html', title='Package Config', pkg_sbn=pkg_sbn, form=form, error=error)
+
+@app.route('/delete_package/<id>', methods=['POST'])
+def delete_package(id):
+    dal.sbn_packages.find_one_and_delete({'package_id':id})
+    flash("Package deleted "+id,"success")
+    # form = PackageConfigForm()
+    # pkg_sbn = dal.sbn_packages.find()
+    # return render_template('/adminpanel/config/package_config.html', title='Package Config', pkg_sbn=pkg_sbn, form=form) 
+    return redirect("/package_config/")
+# ********** PACKAGE END***********
 
 @app.route('/reward_config/', methods=['GET','POST'])
 def reward_config():
@@ -102,11 +123,47 @@ def reward_config():
     reward_member = dal.reward_config.find_one({'reward':'Member'})
     return render_template('/adminpanel/config/reward_config.html', title='Reward Config', reward_weekly = reward_weekly, reward_monthly=reward_monthly, reward_member = reward_member, form=form)
 
+
+# ********** WALLET START***********
 @app.route('/wallet_config/', methods=['GET','POST'])
+@app.route('/wallet_config/<id>',methods=['POST'])
 def wallet_config():
+    # flash(request.args.get('id'),"success")
     form = WalletConfigForm()
+    if request.args.get('id'):
+        form.wallet_hidden.data = request.args.get('id')
+    
+    if form.wallet_hidden.data:
+        form.sbn_wallet.data = form.wallet_hidden.data
+    if request.method == "POST":
+        if form.validate_on_submit():
+            if form.submit.data:
+                if form.wallet_hidden.data:
+                    flash(form.wallet_hidden.data,"success")
+                else:
+                    flash("Please load the wallet to update!","error")
+                    form.sbn_wallet.data = ""
+            if form.load.data:
+                flash("load button!","success")
+                # find_wallet = dal.sbn_wallet.find_one({'wallet':id})
     sbn_wallet = dal.sbn_wallet.find()
     return render_template('/adminpanel/config/wallet_config.html', title='Wallet Config', sbn_wallet = sbn_wallet, form=form)
+
+@app.route('/load_wallet/<id>', methods=['POST'])
+def load_wallet(id):
+    form = WalletConfigForm()
+    find_wallet = dal.sbn_wallet.find_one({'wallet':id})
+    if find_wallet:
+        form.wallet_hidden.data = find_wallet['wallet']
+        form.sbn_wallet.data = form.wallet_hidden.data
+        sbn_wallet = dal.sbn_wallet.find()
+        wallet_config()
+        # return redirect('/wallet_config/')
+        # return render_template('/adminpanel/config/wallet_config.html', title='Wallet Config', sbn_wallet = sbn_wallet, form=form)
+    # flash(form.wallet_hidden,"success")
+#     return redirect("/wallet_config")
+# ********** WALLET END***********
+
 
 @app.route('/weekly_reward/', methods=['GET','POST'])
 def weekly_reward():
