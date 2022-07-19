@@ -62,8 +62,10 @@ class PackageConfigForm(FlaskForm):
 class RewardConfigForm(FlaskForm):
 	createdDate = StringField('Created On', validators=[])
 	reward = StringField('Reward Type')
-	percentage = IntegerField('Reward Percentage', validators=[DataRequired(), Length(min=1,max=2)])
+	percentage = StringField('Reward Percentage', validators=[DataRequired(), Length(min=1,max=2)])
+	reward_hidden = HiddenField()
 	submit = SubmitField('Impact')
+	load = SubmitField('Load')
 
 class WalletConfigForm(FlaskForm):
 	createdDate = StringField('Updated On', validators=[])

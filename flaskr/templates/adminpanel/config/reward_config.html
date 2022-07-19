@@ -8,8 +8,8 @@
     <h3>SBN Rewards Configurations</h3>
   </div>
   <div class="card-body">
-    <form>
-     
+    <form method="POST" onSubmit="return confirm('Are you sure to update the Reward?');">
+     {{ form.csrf_token }}
      <div class="row">
       <div class="col-sm-2">
        {{form.reward.label(class='form-control')}}
@@ -21,14 +21,15 @@
        %
      </div>
      <div class="col-sm-2">
-       <button type="submit" class="btn btn-danger mb-2">Impact</button>
+       <!-- <button type="submit" class="btn btn-danger mb-2">Impact</button> -->
+       {{form.submit(class='btn btn-danger')}}
      </div>
    </div>
  </form>
 </div>
 </div>
 
-<form method="GET" action="/">
+<!-- <form method="GET" action="/"> -->
 <div class="card scrol scrollbar-cyan thin">
   <div class="card-body">
   	<h5 class="card-title">Weekly Rewards Configurations</h5>
@@ -47,7 +48,13 @@
           <th scope="row">1</th>
           <td>{{reward_weekly.createdDate}}</td>
           <td>{{reward_weekly.percentage}}</td>
-          <td><button type="button" class="btn btn-primary" value="{{reward_weekly._id}}">Load</button></td>
+          <td>
+            <!-- <button type="button" class="btn btn-primary" value="{{reward_weekly._id}}">Load</button> -->
+            <form method="POST" action="{{ url_for('reward_load', reward=reward_weekly.reward) }}">
+              {{form.load(class='btn btn-primary')}}
+            <!-- <input type="submit" class="btn btn-primary" value="Load")"> -->
+          </form>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -68,7 +75,13 @@
          
           <td>{{reward_monthly.createdDate}}</td>
           <td>{{reward_monthly.percentage}}</td>
-          <td><button type="button" class="btn btn-primary" value="{{reward_monthly._id}}">Load</button></td>
+          <td>
+            <!-- <button type="button" class="btn btn-primary" value="{{reward_monthly._id}}">Load</button> -->
+            <form method="POST" action="{{ url_for('reward_load', reward=reward_monthly.reward) }}">
+              {{form.load(class='btn btn-primary')}}
+            <!-- <input type="submit" class="btn btn-primary" value="Load")"> -->
+          </form>
+          </td>
          
         </tr>
        
@@ -91,7 +104,13 @@
           
           <td>{{reward_member.createdDate}}</td>
           <td>{{reward_member.percentage}}</td>
-          <td><button type="button" class="btn btn-primary" value="{{reward_member._id}}">Load</button></td>
+          <td>
+            <!-- <button type="button" class="btn btn-primary" value="{{reward_member._id}}">Load</button> -->
+            <form method="POST" action="{{ url_for('reward_load', reward=reward_member.reward) }}">
+              {{form.load(class='btn btn-primary')}}
+            <!-- <input type="submit" class="btn btn-primary" value="Load")"> -->
+          </form>
+          </td>
           
         </tr>
         
@@ -99,7 +118,7 @@
     </table>
   </div>
 </div>
-</form>
+<!-- </form> -->
 
 
 
