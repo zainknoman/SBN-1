@@ -48,8 +48,8 @@
         <td class='col-auto'>{{pkg.package_id}}</td>
         <td>{{pkg.package}}</td>
         <td>
-          <!-- <a href="{{url_for('delete_package', id=pkg.package_id)}}" class="btn btn-danger">Delete</a> -->
-          <form method="POST" action="{{ url_for('delete_package', id=pkg.package_id) }}">
+          <!-- <a href="{{url_for('package_delete', id=pkg.package_id)}}" class="btn btn-danger">Delete</a> -->
+          <form method="POST" action="{{ url_for('package_delete', id=pkg.package_id) }}">
             <input type="submit" class="btn btn-danger" value="Delete" onclick="return confirm('Are you sure to delete this package?')">
           </form>
         </td>

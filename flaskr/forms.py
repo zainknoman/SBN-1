@@ -48,9 +48,11 @@ class ProfileForm(FlaskForm):
 class AnnouncementsForm(FlaskForm):
 	
 	createdDate = StringField('Created On', validators=[])
-	announcements = StringField('Announcements', validators=[DataRequired()])
-	isactive = BooleanField('Status', validators=[])
-	submit = SubmitField('Impact')
+	announcement = StringField('Announcements', validators=[DataRequired()])
+	isactive = BooleanField('Active', validators=[])
+	anna_hidden = HiddenField()
+	submit = SubmitField('Add')
+	load = SubmitField('Load')
 
 class PackageConfigForm(FlaskForm):
 	createdDate = StringField('Created On', validators=[])

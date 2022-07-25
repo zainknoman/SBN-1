@@ -16,6 +16,7 @@ mongodb_client = PyMongo(app)
 # app.config["CACHE_TYPE"] = "null" 
 dal = mongodb_client.db
 
+
 def getUsers():
     sbn_users = dal.sbn_users.aggregate([{'$lookup':{'from':'user_package','localField':'username','foreignField':'username','as':'packages'}}])
     return sbn_users
@@ -67,16 +68,71 @@ def mydashboard():
 def admin_panel():
     return render_template('/adminpanel/adminpanel.html', title='Admin Dashboard')
 
+# ********** ANNOUNCEMENT START***********
+
 @app.route('/announcements/', methods=['GET','POST'])
 def announcements():
-    ann_form = AnnouncementsForm()
+    form = AnnouncementsForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            if form.submit.data:
+                if form.submit.label.text == "Impact":
+                    if form.anna_hidden.data:
+                        pass
+                    else:
+                        flash("Please load the desired announcement to update!","error")
+                        form.announcement.data = ''
+                else:
+                    if form.submit.label.text == "Add":
+                        dal.sbn_announcements.insert_one({'announcement':form.announcement.data, 'isactive':form.isactive.data, 'createdDate':datetime.now().replace(microsecond=0)})
+                        flash("Announcement Added Successfully!","success")
+                        form.announcement.data = ''
+
     sbn_ann = dal.sbn_announcements.find()
-    return render_template('/adminpanel/announcements.html', title='Announcements', sbn_ann=sbn_ann, ann_form=ann_form)
+    return render_template('/adminpanel/announcements.html', title='Announcements', sbn_ann=sbn_ann, form=form)
+
+
+@app.route('/announcement_load/<id>', methods=['GET','POST'])
+def announcement_load(id):
+    form = AnnouncementsForm()
+    id = id
+    if request.method == "POST":
+        if form.validate_on_submit():
+            if form.submit.data:
+                flash(form.submit.label.text,"success")
+                if form.submit.label.text == "Impact":
+                    dal.sbn_announcements.find_one_and_update({'_id':ObjectId(id)},{'$set':{'announcement':form.announcement.data, 'isactive':form.isactive.data, 'createdDate':datetime.now().replace(microsecond=0)}})
+                    flash("Announcement updated","success")
+                    form.announcement.data = ''
+    
+    find_anna = dal.sbn_announcements.find_one({'_id':ObjectId(id)})
+    if find_anna:
+        form.submit.label.text = "Impact"
+        form.anna_hidden.data = find_anna['announcement']
+        form.announcement.data = form.anna_hidden.data
+        form.isactive.data = find_anna['isactive']
+
+        # if form.isactive.data == 'y':
+
+        #     ann_isactive = 1
+        #     # flash(ann_isactive,"success")
+
+        # else:
+        #     ann_isactive = 0
+        #     # flash(ann_isactive,"success")
+    
+    sbn_ann = dal.sbn_announcements.find()
+    return render_template('/adminpanel/announcements.html', title='Announcements', sbn_ann=sbn_ann, form=form)
+    
+
+# ********** ANNOUNCEMENT END***********
 
 @app.route('/user_settings/', methods=['GET','POST'])
 def user_settings():
     form = RegistrationForm()
     return render_template('/adminpanel/users_activation.html', title='User Settings', form=form)
+
+
 # ********** PACKAGE START***********
 @app.route('/package_config/', methods=['GET','POST'])
 def package_config():
@@ -104,14 +160,15 @@ def package_config():
     pkg_sbn = dal.sbn_packages.find()
     return render_template('/adminpanel/config/package_config.html', title='Package Config', pkg_sbn=pkg_sbn, form=form)
 
-@app.route('/delete_package/<id>', methods=['POST'])
-def delete_package(id):
+@app.route('/package_delete/<id>', methods=['POST'])
+def package_delete(id):
     dal.sbn_packages.find_one_and_delete({'package_id':id})
     flash("Package deleted "+id,"success")
     # form = PackageConfigForm()
     # pkg_sbn = dal.sbn_packages.find()
     # return render_template('/adminpanel/config/package_config.html', title='Package Config', pkg_sbn=pkg_sbn, form=form) 
     return redirect("/package_config/")
+
 # ********** PACKAGE END***********
 
 # ********** REWARD START***********
@@ -143,7 +200,6 @@ def reward_load(reward):
     if request.method == "POST":
         if form.validate_on_submit():
             if form.submit.data:
-
                 dal.reward_config.find_one_and_update({'reward':reward},{'$set':{'percentage':form.percentage.data,'createdDate':datetime.now().replace(microsecond=0)}})
                 flash("Reward updated "+reward,"success")
                 form.percentage.data = ''
