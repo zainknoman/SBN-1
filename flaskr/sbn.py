@@ -1,5 +1,7 @@
 from flask import Flask, render_template, url_for, request, flash, redirect, session
-from forms import RegistrationForm, LoginForm, ForgotPwdForm, ForgotUsrForm, ProfileForm, AnnouncementsForm, PackageConfigForm, RewardConfigForm, WalletConfigForm, WeeklyRewardForm
+from forms import (RegistrationForm, LoginForm, ForgotPwdForm, ForgotUsrForm, ProfileForm, 
+    AnnouncementsForm, PackageConfigForm, RewardConfigForm, WalletConfigForm, WeeklyRewardForm,
+    UserActivation)
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from datetime import datetime
@@ -41,7 +43,7 @@ def generateAdminAccount():
     bytePwd = txtPassword.encode('utf-8')
     mysalt = bcrypt.gensalt()
     hashPassword = bcrypt.hashpw(bytePwd,mysalt)
-    dal.sbn_users.insert_one({'username':"admin",'email_address':"admin@sbn.com",'full_name':"Administrator",'password':hashPassword,'is_admin':'true','created_date':datetime.now().replace(microsecond=0),'is_active':'true'})
+    dal.sbn_users.insert_one({'username':"admin",'email_address':"admin@sbn.com",'full_name':"Administrator",'password':hashPassword,'is_admin':True,'created_date':datetime.now().replace(microsecond=0),'is_approved':True,'is_active':None})
 
 
 # def getUsers():
@@ -80,19 +82,32 @@ def load_user(email):
 @app.route('/')
 @app.route("/index", methods=['GET'])
 def index():
+    #generateAdminAccount()
     sbnusers = dal.sbn_users.find_one({'username':'hayyan'})
     return render_template('/index.html', title='SBN is coming!', sbnusers = sbnusers)
 
 @app.route('/logout/')
-@login_required
+# @login_required
 def logout():
-    user = current_user
-    user.authenticated = False
-    logout_user()
-    return redirect('/login/')
+    # user = current_user
+    # user.authenticated = False
+    # logout_user()
+    session['username'] = None
+    session['full_name'] = None
+    session['is_admin'] = None
+    session['is_approved'] = None
+    session['is_active'] = None
+    session.clear()
+    return redirect(url_for('login'))
 
 @app.route('/login/', methods=['GET','POST'])
 def login():
+    if "username" in session:
+        if session['is_admin'] == True:
+            return redirect(url_for('admin_panel'))
+        else:
+            return redirect(url_for('dashboard'))
+
     form = LoginForm()
     
     if request.method == "POST":
@@ -107,7 +122,11 @@ def login():
                     hashPassword = users_find['password']
 
                     if bcrypt.checkpw(bytePwd, hashPassword):
-                        session["username"] = users_find['username']
+                        session['username']=users_find['username']
+                        session['full_name']=users_find['full_name']
+                        session['is_admin']=users_find['is_admin']
+                        session['is_approved']=users_find['is_approved']
+                        session['is_active']=users_find['is_active']
                         #login_user(users_find)
                         #next = flask.request.args.get('next')
                         #current_user.is_active()
@@ -116,18 +135,19 @@ def login():
                         # if not is_safe_url(next):
                         #     return flask.abort(400)
 
-        
-                        if users_find['username'] == "admin":
-                            reg_form = RegistrationForm()
-
+                        if users_find['is_approved'] == False:
+                            flash("Administrator has not approved your account yet, kindly wait 24 hrs you will be notified by email","error")
+                            return render_template('/auth/login.html', title='Login User', form=form )
+                        if users_find['is_admin'] == True:
+                            
                             #return render_template('/adminpanel/users_activation.html', title='Admin Dashboard', users_find=users_find, reg_form=reg_form)
                             #return redirect(next or url_for('/admin_panel'))
                             return redirect(url_for('admin_panel'))
                         else:
                             #return redirect(next or url_for('/mydashboard'))
-                            return redirect(url_for('mydashboard'))
+                            return redirect(url_for('dashboard'))
                     else:
-                        flash("password mismatched","error")
+                        flash("Incorrect Password","error")
                 else:
                     flash("User does not exist!","error")
 
@@ -139,7 +159,7 @@ def signup():
     if request.method == "POST":
         
         if form.signup.data:
-            if forms.validate_on_submit():
+            if form.validate_on_submit():
                 txtReferralCode = datetime.utcnow().strftime('%H%M%S%f')[:-3]
                 # dal.sbn_users.insert_one({'username':"admin",'email_address':"admin@sbn.com",'full_name':"Administrator",'password':"admin123",'is_admin':'true','created_date':datetime.now().replace(microsecond=0),'is_active':'true'})
                 # dal.sbn_users.insert_one({'username':"hayyan",'email_address':"fagholic@gmail.com",'full_name':"hayyan mustafa",'password':"abc@1234",'country':"Pakistan",'mobile':"null",'id_passport':"null",'referral_link':"null",'referral_code':txtReferralCode,'is_admin':'true','is_terms':'true','created_date':datetime.now().replace(microsecond=0),'is_approved':'false','is_active':'false','withdraw_wallet':0,'weekly_reward':0,'monthly_reward':0, 'jackpot_reward':0,'direct_reward':0})
@@ -156,7 +176,7 @@ def signup():
                     txtFullname = form.full_name.data
                     txtCountry = form.country.data
                     txtMobile = form.mobile.data
-                    txtPassport = form.id_passport.data
+                    txtPassport = None
                     txtReferralLink = form.referral_link.data
                     txtReferralCode = datetime.utcnow().strftime('%H%M%S%f')[:-3]
                     # flash(txtReferralCode,"success")
@@ -165,10 +185,10 @@ def signup():
                     mysalt = bcrypt.gensalt()
                     hashPassword = bcrypt.hashpw(bytePwd,mysalt)
                     # if bcrypt.checkpw(txtPassword,hashPassword) - (input,dbpwd)
-                    txtIsAdmin = 'false'
+                    txtIsAdmin = False
                     txtCreatedDate = datetime.now().replace(microsecond=0)
-                    txtIsApproved = 'false'
-                    txtIsActive = 'false'
+                    txtIsApproved = False
+                    txtIsActive = False
                     txtWithdrawWallet = 0
                     txtWeeklyReward = 0
                     txtMonthlyReward = 0
@@ -178,6 +198,8 @@ def signup():
                     
                     dal.sbn_users.insert_one({'username':txtUsername,'email_address':txtEmail,'full_name':txtFullname,'password':hashPassword,'country':txtCountry,'mobile':txtMobile,'id_passport':txtPassport,'referral_link':txtReferralLink,'referral_code':txtReferralCode,'is_admin':txtIsAdmin,'is_terms':txtIsTerms,'created_date':txtCreatedDate,'is_approved':txtIsApproved,'is_active':txtIsActive,'withdraw_wallet':txtWithdrawWallet,'weekly_reward':txtWeeklyReward,'monthly_reward':txtMonthlyReward, 'jackpot_reward':txtJackpotReward,'direct_reward':txtDirectReward})
                     flash("Sign Up Successfull!","success")
+            else:
+                flash(form.errors,"error")
 
     return render_template('/auth/signup.html', title='Sign Up User', form=form)
 
@@ -205,17 +227,23 @@ def profile():
 #     return render_template('mydashboard.html', title='User Dashboard')
 
 
-@app.route('/mydashboard/')
-def mydashboard():
-    return render_template('dashboard.html', title='User Dashboard')
+@app.route('/dashboard/')
+def dashboard():
+    if "username" in session:
+        if session['is_admin'] == False and session['is_approved'] == True :
+            return render_template('dashboard.html', title='User Dashboard')
+
+    return redirect(url_for('logout'))
 
 @app.route('/admin_panel/')
 #@login_required
 def admin_panel():
-    if "username" in session:
-        return render_template('/adminpanel/adminpanel.html', title='Admin Dashboard')
-    else:
-        return url_for('login')
+    # if "username" in session:
+    if session['is_admin'] == True and session['is_approved'] == True:
+        form = UserActivation()
+        return render_template('/adminpanel/users_activation.html', title='Admin Dashboard', form=form)
+   
+    return redirect(url_for('logout'))
 
 # ********** ANNOUNCEMENT START***********
 

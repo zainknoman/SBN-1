@@ -8,10 +8,10 @@ class RegistrationForm(FlaskForm):
 	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
 	email_address = StringField('Email Address', validators=[DataRequired(), Email()])
 	full_name = StringField('Full Name', validators=[DataRequired(), Length(min=5,max=100)])
-	country = StringField('Country', validators=[Length(min=5,max=30)])
-	mobile = StringField('Mobile', validators=[Length(min=10,max=30)])
+	country = StringField('Country', validators=[Length(min=0,max=30)])
+	mobile = StringField('Mobile', validators=[Length(min=0,max=30)])
 	#id_passport = StringField('ID / Passport', validators=[Length(min=10,max=30)])
-	referral_link = StringField('Referral Link', validators=[Length(min=5,max=15)])
+	
 	#referral_code = StringField('Referral Code', validators=[Length(min=5,max=15)])
 	password = PasswordField('Password', validators=[DataRequired(), Length(min=8,max=15)])
 	confirm_pass = PasswordField('Confirm Password', 
@@ -28,7 +28,21 @@ class RegistrationForm(FlaskForm):
 	#jackpot_reward = StringField('Jackpot Wallet')
 	#direct_reward = StringField('Direct Wallet')
 	is_terms = BooleanField('Terms & Conditions', validators=[DataRequired()])
+	referral_link = StringField('Referral Link', validators=[Length(min=0,max=10)])
 	signup = SubmitField('Sign Up')
+
+class UserActivation(FlaskForm):
+	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
+	email_address = StringField('Email Address', validators=[DataRequired(), Email()])
+	full_name = StringField('Full Name', validators=[DataRequired(), Length(min=5,max=100)])
+	createdDate = StringField('Created On')
+	activeDate = StringField('Activated On')
+	updatedDate = StringField('Activated On')
+	is_approved = BooleanField('Is Approved')
+	is_active = BooleanField('Is Active')
+	load = SubmitField('Load')
+	activate = SubmitField('Activate')
+	approve = SubmitField('Approve')
 
 class LoginForm(FlaskForm):
 	email_address = StringField('Email', validators=[DataRequired(), Email()])

@@ -46,6 +46,7 @@
   </head>
   <body>
 
+
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
       <!-- <img src="../static/logo-color-sm.png"> -->
       <symbol id="bootstrap" viewBox="0 0 118 94">
@@ -113,14 +114,15 @@
           <!-- <svg class="bi me-2" width="30" height="24"><use xlink:href="#bootstrap"/></svg> -->
           <img src="../static/logo-color-sm.png">
           <span>&nbsp;</span>
-          <span class="fs-5 fw-semibold">Welcome {{session['username']}}</span>
+          <span class="fs-5 fw-semibold">Welcome {{session['full_name']}}</span>
         </a>
+
         <ul class="list-unstyled ps-0">
           <li class="mb-1">
-            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#user-collapse" aria-expanded="true">
               User Management
             </button>
-            <div class="collapse show" id="home-collapse">
+            <div class="collapse show" id="user-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                 <li><a href="{{url_for('user_settings')}}" class="link-dark rounded">Approve / Activate</a></li>
                 <!-- <li><a href="#" class="link-dark rounded">Modify Details</a></li> -->
@@ -142,10 +144,10 @@
             </div>
           </li>
           <li class="mb-1">
-            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#config-collapse" aria-expanded="false">
               Configurations
             </button>
-            <div class="collapse" id="orders-collapse">
+            <div class="collapse" id="config-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                 <li><a href="{{url_for('package_config')}}" class="link-dark rounded">Package Configurations</a></li>
                 <li><a href="{{url_for('reward_config')}}" class="link-dark rounded">Reward Configurations</a>
@@ -157,14 +159,27 @@
           </ul>
         </div>
       </li>
-      <li class="border-top my-3"></li>
       <li class="mb-1">
-        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#announcement-collapse" aria-expanded="false">
           Announcements
         </button>
-        <div class="collapse" id="account-collapse">
+        <div class="collapse" id="announcement-collapse">
           <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
             <li><a href="{{url_for('announcements')}}" class="link-dark rounded">Add / Modify</a></li>
+            <!-- <li><a href="#" class="link-dark rounded">Profile</a></li>
+            <li><a href="#" class="link-dark rounded">Settings</a></li>
+            <li><a href="#" class="link-dark rounded">Sign out</a></li> -->
+          </ul>
+        </div>
+      </li>
+      <li class="border-top my-3"></li>
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#exit-collapse" aria-expanded="false">
+          Exit
+        </button>
+        <div class="collapse" id="exit-collapse">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="{{url_for('logout')}}" class="link-dark rounded">Logout</a></li>
             <!-- <li><a href="#" class="link-dark rounded">Profile</a></li>
             <li><a href="#" class="link-dark rounded">Settings</a></li>
             <li><a href="#" class="link-dark rounded">Sign out</a></li> -->
