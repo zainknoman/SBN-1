@@ -113,7 +113,7 @@
           <!-- <svg class="bi me-2" width="30" height="24"><use xlink:href="#bootstrap"/></svg> -->
           <img src="../static/logo-color-sm.png">
           <span>&nbsp;</span>
-          <span class="fs-5 fw-semibold">Welcome Admin</span>
+          <span class="fs-5 fw-semibold">Welcome {{session['username']}}</span>
         </a>
         <ul class="list-unstyled ps-0">
           <li class="mb-1">
@@ -123,7 +123,7 @@
             <div class="collapse show" id="home-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                 <li><a href="{{url_for('user_settings')}}" class="link-dark rounded">Approve / Activate</a></li>
-                <li><a href="#" class="link-dark rounded">Modify Details</a></li>
+                <!-- <li><a href="#" class="link-dark rounded">Modify Details</a></li> -->
                 <!-- <li><a href="#" class="link-dark rounded">Reports</a></li> -->
               </ul>
             </div>

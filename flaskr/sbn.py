@@ -1,8 +1,17 @@
-from flask import Flask, render_template, url_for, request, flash, redirect
-from forms import RegistrationForm, LoginForm, ForgotPwdForm, ForgotUsrForm, ProfileForm, AnnouncementsForm, PackageConfigForm, RewardConfigForm, WalletConfigForm
+from flask import Flask, render_template, url_for, request, flash, redirect, session
+from forms import RegistrationForm, LoginForm, ForgotPwdForm, ForgotUsrForm, ProfileForm, AnnouncementsForm, PackageConfigForm, RewardConfigForm, WalletConfigForm, WeeklyRewardForm
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from datetime import datetime
+import bcrypt
+from flask_login import (
+    UserMixin,
+    login_user,
+    LoginManager,
+    current_user,
+    logout_user,
+    login_required,
+)
 
 app = Flask(__name__)
 
@@ -16,25 +25,161 @@ mongodb_client = PyMongo(app)
 # app.config["CACHE_TYPE"] = "null" 
 dal = mongodb_client.db
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.session_protection = "strong"
+login_manager.login_view = "login"
+login_manager.login_message_category = "info"
+login_manager.login_message = "Please login to access the page"
 
-def getUsers():
-    sbn_users = dal.sbn_users.aggregate([{'$lookup':{'from':'user_package','localField':'username','foreignField':'username','as':'packages'}}])
-    return sbn_users
+
+
+
+
+def generateAdminAccount():
+    txtPassword = "admin@1234"
+    bytePwd = txtPassword.encode('utf-8')
+    mysalt = bcrypt.gensalt()
+    hashPassword = bcrypt.hashpw(bytePwd,mysalt)
+    dal.sbn_users.insert_one({'username':"admin",'email_address':"admin@sbn.com",'full_name':"Administrator",'password':hashPassword,'is_admin':'true','created_date':datetime.now().replace(microsecond=0),'is_active':'true'})
+
+
+# def getUsers():
+#     sbn_users = dal.sbn_users.aggregate([{'$lookup':{'from':'user_package','localField':'username','foreignField':'username','as':'packages'}}])
+#     return sbn_users
+
+
+class User(UserMixin):
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+        self.active = True
+        if self.username == 'admin':
+            self.is_admin = True
+        else:
+            self.is_admin = False
+
+    def get_id(self):
+        return self.username
+
+    @property
+    def is_active(self):
+        return self.active
+
+
+def get_user(user_email):
+    user = dal.sbn_users.find_one({'email_address':user_email})
+    return user
+
+@login_manager.user_loader
+def load_user(email):
+    #return User.get(username)
+    #return dal.sbn_users.find_one({'email_address':user_id})
+    return get_user(email)
+
 @app.route('/')
 @app.route("/index", methods=['GET'])
 def index():
     sbnusers = dal.sbn_users.find_one({'username':'hayyan'})
     return render_template('/index.html', title='SBN is coming!', sbnusers = sbnusers)
-    
+
+@app.route('/logout/')
+@login_required
+def logout():
+    user = current_user
+    user.authenticated = False
+    logout_user()
+    return redirect('/login/')
+
 @app.route('/login/', methods=['GET','POST'])
 def login():
     form = LoginForm()
+    
+    if request.method == "POST":
+        if form.validate_on_submit():
+            if form.login.data:
+                txtPassword = form.password.data
+                bytePwd = txtPassword.encode('utf-8')
+                # mysalt = bcrypt.gensalt()
+                # hashPassword = bcrypt.hashpw(bytePwd,mysalt)
+                users_find = get_user(form.email_address.data)#load_user(form.email_address.data)#dal.sbn_users.find_one({'email_address':form.email_address.data})
+                if users_find:
+                    hashPassword = users_find['password']
+
+                    if bcrypt.checkpw(bytePwd, hashPassword):
+                        session["username"] = users_find['username']
+                        #login_user(users_find)
+                        #next = flask.request.args.get('next')
+                        #current_user.is_active()
+                        # is_safe_url should check if the url is safe for redirects.
+                        # See http://flask.pocoo.org/snippets/62/ for an example.
+                        # if not is_safe_url(next):
+                        #     return flask.abort(400)
+
+        
+                        if users_find['username'] == "admin":
+                            reg_form = RegistrationForm()
+
+                            #return render_template('/adminpanel/users_activation.html', title='Admin Dashboard', users_find=users_find, reg_form=reg_form)
+                            #return redirect(next or url_for('/admin_panel'))
+                            return redirect(url_for('admin_panel'))
+                        else:
+                            #return redirect(next or url_for('/mydashboard'))
+                            return redirect(url_for('mydashboard'))
+                    else:
+                        flash("password mismatched","error")
+                else:
+                    flash("User does not exist!","error")
+
     return render_template('/auth/login.html', title='Login User', form=form )
 
 @app.route('/signup/', methods=['GET','POST'])
 def signup():
     form = RegistrationForm()
-    return render_template('/auth/signup.html', title='Register User', form=form)
+    if request.method == "POST":
+        
+        if form.signup.data:
+            if forms.validate_on_submit():
+                txtReferralCode = datetime.utcnow().strftime('%H%M%S%f')[:-3]
+                # dal.sbn_users.insert_one({'username':"admin",'email_address':"admin@sbn.com",'full_name':"Administrator",'password':"admin123",'is_admin':'true','created_date':datetime.now().replace(microsecond=0),'is_active':'true'})
+                # dal.sbn_users.insert_one({'username':"hayyan",'email_address':"fagholic@gmail.com",'full_name':"hayyan mustafa",'password':"abc@1234",'country':"Pakistan",'mobile':"null",'id_passport':"null",'referral_link':"null",'referral_code':txtReferralCode,'is_admin':'true','is_terms':'true','created_date':datetime.now().replace(microsecond=0),'is_approved':'false','is_active':'false','withdraw_wallet':0,'weekly_reward':0,'monthly_reward':0, 'jackpot_reward':0,'direct_reward':0})
+                users_find = dal.sbn_users.find_one({'username':form.username.data})
+                if users_find:
+                    flash("Username "+form.username.data+" already exists please try another","error")
+                    return render_template('/auth/signup.html', title='Sign Up User', form=form)
+                else:
+                    # dal.sbn_users.insert_one({'username':txtUsername,'email_address':txtEmail,'full_name':txtFullname,'password':txtPassword,'country':txtCountry,'mobile':txtMobile,'id_passport':txtPassport,'referral_link':txtReferralLink,'referral_code':txtReferralCode,'is_admin':txtIsAdmin,'is_terms':txtIsTerms,'created_date':txtCreatedDate,'is_approved':txtIsApproved,'is_active':txtIsActive,'withdraw_wallet':txtWithdrawWallet,'weekly_reward':txtWeeklyReward,'monthly_reward':txtMonthlyReward, 'jackpot_reward':txtJackpotReward,'direct_reward':txtDirectReward})
+                    
+        
+                    txtUsername = form.username.data
+                    txtEmail = form.email_address.data
+                    txtFullname = form.full_name.data
+                    txtCountry = form.country.data
+                    txtMobile = form.mobile.data
+                    txtPassport = form.id_passport.data
+                    txtReferralLink = form.referral_link.data
+                    txtReferralCode = datetime.utcnow().strftime('%H%M%S%f')[:-3]
+                    # flash(txtReferralCode,"success")
+                    txtPassword = form.password.data
+                    bytePwd = txtPassword.encode('utf-8')
+                    mysalt = bcrypt.gensalt()
+                    hashPassword = bcrypt.hashpw(bytePwd,mysalt)
+                    # if bcrypt.checkpw(txtPassword,hashPassword) - (input,dbpwd)
+                    txtIsAdmin = 'false'
+                    txtCreatedDate = datetime.now().replace(microsecond=0)
+                    txtIsApproved = 'false'
+                    txtIsActive = 'false'
+                    txtWithdrawWallet = 0
+                    txtWeeklyReward = 0
+                    txtMonthlyReward = 0
+                    txtJackpotReward = 0
+                    txtDirectReward = 0
+                    txtIsTerms = form.is_terms.data
+                    
+                    dal.sbn_users.insert_one({'username':txtUsername,'email_address':txtEmail,'full_name':txtFullname,'password':hashPassword,'country':txtCountry,'mobile':txtMobile,'id_passport':txtPassport,'referral_link':txtReferralLink,'referral_code':txtReferralCode,'is_admin':txtIsAdmin,'is_terms':txtIsTerms,'created_date':txtCreatedDate,'is_approved':txtIsApproved,'is_active':txtIsActive,'withdraw_wallet':txtWithdrawWallet,'weekly_reward':txtWeeklyReward,'monthly_reward':txtMonthlyReward, 'jackpot_reward':txtJackpotReward,'direct_reward':txtDirectReward})
+                    flash("Sign Up Successfull!","success")
+
+    return render_template('/auth/signup.html', title='Sign Up User', form=form)
 
 @app.route('/verify/')
 def verify_usr():
@@ -65,8 +210,12 @@ def mydashboard():
     return render_template('dashboard.html', title='User Dashboard')
 
 @app.route('/admin_panel/')
+#@login_required
 def admin_panel():
-    return render_template('/adminpanel/adminpanel.html', title='Admin Dashboard')
+    if "username" in session:
+        return render_template('/adminpanel/adminpanel.html', title='Admin Dashboard')
+    else:
+        return url_for('login')
 
 # ********** ANNOUNCEMENT START***********
 
@@ -262,15 +411,17 @@ def wallet_load(wallet):
 
 @app.route('/weekly_reward/', methods=['GET','POST'])
 def weekly_reward():
-    form = RewardConfigForm()
-    sbn_weekly = getUsers()
+    form = WeeklyRewardForm()
+    sbn_weekly = null#getUsers()
+    reward_weekly = dal.reward_config.find_one({'reward':'Weekly'})
+    form.percentage.data = reward_weekly['percentage']
     return render_template('/adminpanel/dashboard/weekly_rewards.html', title='Weekly Rewards', form=form, sbn_weekly=sbn_weekly)
 
 @app.route('/monthly_reward/', methods=['GET','POST'])
 def monthly_reward():
     form = RewardConfigForm()
     sbn_packages = dal.sbn_packages.find()
-    sbn_monthly = getUsers()
+    sbn_monthly = null#getUsers()
     return render_template('/adminpanel/dashboard/monthly_rewards.html', title='Monthly Rewards', form=form, sbn_packages = sbn_packages, sbn_monthly=sbn_monthly)
 
 @app.route('/direct_reward/', methods=['GET','POST'])
@@ -283,7 +434,7 @@ def direct_reward():
 def jackpot():
     reg_form = RegistrationForm()
     # sbn_jackpot = dal.sbn_users.find({'is_active':'true','is_admin':'false'})
-    sbn_jackpot = getUsers()
+    sbn_jackpot = null#getUsers()
     return render_template('/adminpanel/dashboard/jackpot.html', title='Jackpot', sbn_jackpot=sbn_jackpot, reg_form=reg_form)
 
 
