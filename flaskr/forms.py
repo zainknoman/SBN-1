@@ -31,18 +31,45 @@ class RegistrationForm(FlaskForm):
 	referral_link = StringField('Referral Link', validators=[Length(min=0,max=10)])
 	signup = SubmitField('Sign Up')
 
-class UserActivation(FlaskForm):
+class MemberActivation(FlaskForm):
 	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
 	email_address = StringField('Email Address', validators=[DataRequired(), Email()])
 	full_name = StringField('Full Name', validators=[DataRequired(), Length(min=5,max=100)])
 	createdDate = StringField('Created On')
 	activeDate = StringField('Activated On')
-	updatedDate = StringField('Activated On')
-	is_approved = BooleanField('Is Approved')
 	is_active = BooleanField('Is Active')
 	load = SubmitField('Load')
 	activate = SubmitField('Activate')
+
+class MemberApproval(FlaskForm):
+	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
+	email_address = StringField('Email Address', validators=[DataRequired(), Email()])
+	full_name = StringField('Full Name', validators=[DataRequired(), Length(min=5,max=100)])
+	createdDate = StringField('Created On')
+	updatedDate = StringField('Activated On')
+	is_approved = BooleanField('Is Approved')
+	load = SubmitField('Load')
 	approve = SubmitField('Approve')
+
+class AdminUsers(FlaskForm):
+	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
+	email_address = StringField('Email Address', validators=[DataRequired(), Email()])
+	full_name = StringField('Full Name', validators=[DataRequired(), Length(min=5,max=100)])
+	password = PasswordField('Password', validators=[DataRequired(), Length(min=8,max=15)])
+	confirm_pass = PasswordField('Confirm Password', 
+		validators=[DataRequired(), Length(min=8,max=15),EqualTo('password')])
+	createdDate = StringField('Created On')
+	submit = SubmitField('Add Admin')
+
+class AdminApproval(FlaskForm):
+	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
+	email_address = StringField('Email Address', validators=[DataRequired(), Email()])
+	full_name = StringField('Full Name', validators=[DataRequired(), Length(min=5,max=100)])
+	updatedDate = StringField('Updated On')
+	is_approved = BooleanField('Is Approved')
+	approve_hidden = HiddenField()
+	load = SubmitField('Load')
+	submit = SubmitField('Approve')
 
 class LoginForm(FlaskForm):
 	email_address = StringField('Email', validators=[DataRequired(), Email()])

@@ -1,0 +1,76 @@
+{% extends "base_admin.html"%}
+{% block content_admin %}
+
+
+
+<div class="card">
+	<div class="card-header">
+		<h3>Admin Approval</h3>
+	</div>
+	<div class="card-body">
+		
+
+			<div class="row">
+				<div class="col-sm-2">
+					{{form.username.label(class='form-control', placeholder='Username')}}
+				</div>
+				<div class="col-sm-3">
+					{{form.full_name.label(class='form-control', placeholder='Full Name')}}
+				</div>
+				<div class="col-sm-4">
+					{{form.email_address.label(class='form-control', placeholder='Email@address.com')}}
+				</div>
+				<div class="col-sm-1" >
+					<form method="POST" onSubmit="return confirm('Please confirm to approve this admin user for login?');">
+						{{ form.csrf_token }}
+						{{form.submit(class='btn btn-success')}}
+						<!-- <button type="submit" class="btn btn-primary mb-2">Approve</button> -->
+					</form>
+				</div>
+				
+			</div>
+		
+	</div>
+</div>
+
+<div class="card scrol scrollbar-cyan thin">
+	
+	<div class="card-body">
+		<h5 class="card-title">Unapproved Accounts</h5>
+		<table class="table table-hover">
+			<thead class="thead-light">
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Created On</th>
+					<th scope="col-auto">Approval Date</th>
+					<th scope="col">Username</th>
+					<th scope="col">Approve</th>
+					<th scope="col">Modify</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- {% set ns = namespace(i = 0) %} -->
+        		{% for data in admin_data %}
+				<tr>
+					<th scope="row">{{loop.index}}</th>
+					<td>{{data.created_date}}</td>
+					<td>{{data.updated_date}}</td>
+					<td class='col-auto'>{{data.username}}</td>
+					<td>{{data.is_approve}}</td>
+					<td>
+						<form method="POST" action="{{ url_for('admin_approval', uxr=data.username) }}">
+              				{{form.load(class='btn btn-primary')}}
+            			</form>
+						<!-- <button type="button" class="btn btn-primary">Load</button> -->
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+</div>
+
+
+{% endblock content_admin %}
+

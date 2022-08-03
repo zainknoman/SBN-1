@@ -119,17 +119,32 @@
 
         <ul class="list-unstyled ps-0">
           <li class="mb-1">
-            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#user-collapse" aria-expanded="true">
-              User Management
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#admin-collapse" aria-expanded="true">
+              Admin Accounts
             </button>
-            <div class="collapse show" id="user-collapse">
+            <div class="collapse show" id="admin-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                <li><a href="{{url_for('user_settings')}}" class="link-dark rounded">Approve / Activate</a></li>
-                <!-- <li><a href="#" class="link-dark rounded">Modify Details</a></li> -->
-                <!-- <li><a href="#" class="link-dark rounded">Reports</a></li> -->
+                <li><a href="{{url_for('admin_add')}}" class="link-dark rounded">Add Admin</a></li>
+                <li><a href="{{url_for('admin_approval')}}" class="link-dark rounded">Admin Approval</a></li>
+                <li><a href="{{url_for('admin_disapproval')}}" class="link-dark rounded">Admin Disapproval</a></li>
+
               </ul>
             </div>
           </li>
+          
+          <li class="mb-1">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#member-collapse" aria-expanded="true">
+              Member Accounts
+            </button>
+            <div class="collapse show" id="member-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="{{url_for('member_approval')}}" class="link-dark rounded">Member Approval</a></li>
+                <li><a href="{{url_for('member_activation')}}" class="link-dark rounded">Member Activation</a></li>
+
+              </ul>
+            </div>
+          </li>
+
           <li class="mb-1">
             <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
               Dashboard
@@ -143,6 +158,7 @@
               </ul>
             </div>
           </li>
+
           <li class="mb-1">
             <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#config-collapse" aria-expanded="false">
               Configurations
@@ -159,6 +175,7 @@
           </ul>
         </div>
       </li>
+
       <li class="mb-1">
         <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#announcement-collapse" aria-expanded="false">
           Announcements
@@ -172,6 +189,7 @@
           </ul>
         </div>
       </li>
+      
       <li class="border-top my-3"></li>
       <li class="mb-1">
         <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#exit-collapse" aria-expanded="false">
