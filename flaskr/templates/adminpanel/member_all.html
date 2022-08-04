@@ -1,0 +1,47 @@
+{% extends "base_admin.html"%}
+{% block content_admin %}
+
+
+
+
+
+<div class="card scrol scrollbar-cyan thin">
+	
+	<div class="card-body">
+		<h5 class="card-title">All Members Accounts</h5>
+		<table class="table table-hover">
+			<thead class="thead-light">
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Created On</th>
+					<th scope="col-auto">Approval Date</th>
+					<th scope="col-auto">Activation Date</th>
+					<th scope="col">Username</th>
+					<th scope="col">Approved</th>
+					<th scope="col">Active</th>
+					
+				</tr>
+			</thead>
+			<tbody>
+				<!-- {% set ns = namespace(i = 0) %} -->
+        		{% for data in member_data %}
+				<tr>
+					<th scope="row">{{loop.index}}</th>
+					<td>{{data.created_date}}</td>
+					<td>{{data.updated_date}}</td>
+					<td>{{data.active_date}}</td>
+					<td class='col-auto'>{{data.username}}</td>
+					<td>{{data.is_approved}}</td>
+					<td>{{data.is_active}}</td>
+					
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+</div>
+
+
+{% endblock content_admin %}
+

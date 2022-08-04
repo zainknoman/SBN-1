@@ -56,23 +56,33 @@ class AdminUsers(FlaskForm):
 	email_address = StringField('Email Address', validators=[DataRequired(), Email()])
 	full_name = StringField('Full Name', validators=[DataRequired(), Length(min=5,max=100)])
 	password = PasswordField('Password', validators=[DataRequired(), Length(min=8,max=15)])
-	confirm_pass = PasswordField('Confirm Password', 
-		validators=[DataRequired(), Length(min=8,max=15),EqualTo('password')])
-	createdDate = StringField('Created On')
+	confirm_pass = PasswordField('Confirm Password', validators=[DataRequired(), Length(min=8,max=15),EqualTo('password')])
+	# createdDate = StringField('Created On')
 	submit = SubmitField('Add Admin')
 
-class AdminApproval(FlaskForm):
+class AdminManager(FlaskForm):
 	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
 	email_address = StringField('Email Address', validators=[DataRequired(), Email()])
 	full_name = StringField('Full Name', validators=[DataRequired(), Length(min=5,max=100)])
-	updatedDate = StringField('Updated On')
-	is_approved = BooleanField('Is Approved')
+	# updatedDate = StringField('Updated On')
+	# is_approved = BooleanField('Is Approved')
 	approve_hidden = HiddenField()
 	load = SubmitField('Load')
-	submit = SubmitField('Approve')
+	submit = SubmitField()
+
+class MemberManager(FlaskForm):
+	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
+	email_address = StringField('Email Address', validators=[DataRequired(), Email()])
+	full_name = StringField('Full Name', validators=[DataRequired(), Length(min=5,max=100)])
+	# updatedDate = StringField('Updated On')
+	# is_approved = BooleanField('Is Approved')
+	member_hidden = HiddenField()
+	load = SubmitField('Load')
+	submit = SubmitField()
 
 class LoginForm(FlaskForm):
-	email_address = StringField('Email', validators=[DataRequired(), Email()])
+	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
+	# email_address = StringField('Email', validators=[DataRequired(), Email()])
 	password = PasswordField('Password', validators=[DataRequired(), Length(min=8,max=15)])
 	# remember = BooleanField('Remember Me')
 	login = SubmitField('Login')

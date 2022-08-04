@@ -1,8 +1,9 @@
 from flask import Flask, render_template, url_for, request, flash, redirect, session
 from forms import (RegistrationForm, LoginForm, ForgotPwdForm, ForgotUsrForm, ProfileForm, 
     AnnouncementsForm, PackageConfigForm, RewardConfigForm, WalletConfigForm, WeeklyRewardForm,
-    MemberActivation, MemberApproval, AdminApproval, AdminUsers)
+    MemberManager, AdminManager, AdminUsers)
 from flask_pymongo import PyMongo
+from flask_wtf.csrf import CSRFProtect
 from bson.objectid import ObjectId
 from datetime import datetime
 import bcrypt
@@ -16,13 +17,16 @@ from flask_login import (
 )
 
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = '65be61ace4c4e656af472288a7202919'
+app.config['MONGO_URI'] = "mongodb://localhost:27017/sbndb"
 # for cross site 
 # python commandline 
 # import secrets
 # secrets.token_hex(16)
-app.config['SECRET_KEY'] = '65be61ace4c4e656af472288a7202919'
-app.config['MONGO_URI'] = "mongodb://localhost:27017/sbndb"
+csrf = CSRFProtect()
+csrf.init_app(app)
+
+
 mongodb_client = PyMongo(app)
 # app.config["CACHE_TYPE"] = "null" 
 dal = mongodb_client.db
@@ -34,10 +38,6 @@ login_manager.login_view = "login"
 login_manager.login_message_category = "info"
 login_manager.login_message = "Please login to access the page"
 
-
-
-
-
 def generateAdminAccount():
     txtPassword = "admin@1234"
     bytePwd = txtPassword.encode('utf-8')
@@ -46,40 +46,59 @@ def generateAdminAccount():
     dal.sbn_users.insert_one({'username':"admin",'email_address':"admin@sbn.com",'full_name':"Administrator",'password':hashPassword,'is_admin':True,'created_date':datetime.now().replace(microsecond=0),'updated_date':datetime.now().replace(microsecond=0),'is_approved':True,'is_active':None})
 
 def get_admins(approve):
-    sbn_data = dal.sbn_users.find({'$and':[{'is_admin':{'$eq':True}},{'is_approved':{'$eq':approve}}]})
+    # sbn_data = dal.sbn_users.find({'$and':[{'is_admin':{'$eq':True}},{'is_approved':{'$eq':approve}}]})
+    sbn_data = dal.sbn_users.find({'is_admin':True,'is_approved':approve})
     return sbn_data 
 
 def getall_admins():
-    sbn_data = dal.sbn_users.find()
+    sbn_data = dal.sbn_users.find({'is_admin':True})
+    return sbn_data
+
+def getall_members():
+    sbn_data = dal.sbn_users.find({'is_admin':False})
     return sbn_data
 
 def addAdminAccount(txtUsername,txtEmail,txtFullname,txtPassword):
-    
     bytePwd = txtPassword.encode('utf-8')
     mysalt = bcrypt.gensalt()
     hashPassword = bcrypt.hashpw(bytePwd,mysalt)
-    dal.sbn_users.insert_one({'username':txtUsername,'email_address':txtEmail,'full_name':txtFullname,'password':hashPassword,'is_admin':True,'created_date':datetime.now().replace(microsecond=0),'is_approved':False,'is_active':None})
-    return
+    dal.sbn_users.insert_one({'username':txtUsername,'email_address':txtEmail,'full_name':txtFullname,'password':hashPassword,'is_admin':True,'created_date':datetime.now().replace(microsecond=0),'updated_date':None,'is_approved':False,'is_active':None})
+
+def addMemberAccount(txtUsername,txtEmail,txtFullname,txtCountry,txtMobile,txtReferralLink,txtReferralCode,hashPassword,txtCreatedDate,txtIsTerms):
+    dal.sbn_users.insert_one({'username':txtUsername,'email_address':txtEmail,'full_name':txtFullname,'password':hashPassword,'country':txtCountry,'mobile':txtMobile,'id_passport':None,'referral_link':txtReferralLink,'referral_code':txtReferralCode,'is_admin':False,'is_terms':txtIsTerms,'created_date':txtCreatedDate,'updated_date':None,'active_date':None,'is_approved':False,'is_active':False,'withdraw_wallet':0,'weekly_reward':0,'monthly_reward':0, 'jackpot_reward':0,'direct_reward':0})
 
 def approveAdminAccount(uxr,approve):
     dal.sbn_users.find_one_and_update({'username':uxr},{'$set':{'is_approved':approve, 'updated_date':datetime.now().replace(microsecond=0)}})
-    return
-
 
 # def getUsers():
 #     sbn_users = dal.sbn_users.aggregate([{'$lookup':{'from':'user_package','localField':'username','foreignField':'username','as':'packages'}}])
 #     return sbn_users
 
-def get_unapproved_member():
-    sbn_data = dal.sbn_users.find({'$and':[{'is_admin':{'$eq':False}},{'is_approved':{'$eq':False}}]})
+def get_memberManager(todo):
+    if todo == 'approval':
+        sbn_data = dal.sbn_users.find({'$and':[{'is_admin':{'$eq':False}},{'is_approved':{'$eq':False}}]})
+    elif todo == 'activation':
+        sbn_data = dal.sbn_users.find({'$and':[{'is_admin':{'$eq':False}},{'is_active':{'$eq':False}}]})
     return sbn_data 
 
-def get_inactive_member():
-    sbn_data = dal.sbn_users.find({'$and':[{'is_admin':{'$eq':False}},{'is_active':{'$eq':False}}]})
+def get_approvedMembers():
+    sbn_data = dal.sbn_users.find({'$and':[{'is_admin':{'$eq':False}},{'is_approved':{'$eq':True}}]})
     return sbn_data
 
+def get_activeMembers():
+    sbn_data = dal.sbn_users.find({'$and':[{'is_admin':{'$eq':False}},{'is_active':{'$eq':True}}]})
+    return sbn_data
+    
 
+# def get_inactive_member():
+#     sbn_data = dal.sbn_users.find({'$and':[{'is_admin':{'$eq':False}},{'is_active':{'$eq':False}}]})
+#     return sbn_data
 
+def approveMemberAccount(uxr,approve):
+    dal.sbn_users.find_one_and_update({'username':uxr},{'$set':{'is_approved':approve, 'updated_date':datetime.now().replace(microsecond=0)}})
+
+def activeMemberAccount(uxr,active):
+    dal.sbn_users.find_one_and_update({'username':uxr},{'$set':{'is_active':active, 'active_date':datetime.now().replace(microsecond=0)}})
 
 
 def flushAdminUsers():
@@ -90,8 +109,15 @@ def flushAdminUsers():
     form.password.data = None
     return
 
-def flushAdminApproval():
-    form = AdminApproval()
+def flushAdminManager():
+    form = AdminManager()
+    form.username.data = None
+    form.full_name.data = None
+    form.email_address.data = None
+    return
+
+def flushMemberManager():
+    form = MemberManager()
     form.username.data = None
     form.full_name.data = None
     form.email_address.data = None
@@ -104,40 +130,56 @@ def killSession():
     session['is_approved'] = None
     session['is_active'] = None
     session.clear()
+    
     return
 
 
-class User(UserMixin):
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
-        self.active = True
-        if self.username == 'admin':
-            self.is_admin = True
-        else:
-            self.is_admin = False
+# class User(UserMixin):
+#     def __init__(self, username, password):
+#         self.username = username
+#         self.password = password
+#         self.active = True
+#         if self.username == 'admin':
+#             self.is_admin = True
+#         else:
+#             self.is_admin = False
 
-    def get_id(self):
-        return self.username
+#     def get_id(self):
+#         return self.username
 
-    @property
-    def is_active(self):
-        return self.active
+#     @property
+#     def is_active(self):
+#         return self.active
 
-
-def getby_email(user_email):
+def getLogin_email(user_email):
     user = dal.sbn_users.find_one({'email_address':user_email})
     return user
 
-def getby_username(username):
+def getLogin_username(username):
     user = dal.sbn_users.find_one({'username':username})
+    return user
+
+def getMember_email(user_email):
+    user = dal.sbn_users.find_one({'email_address':user_email, 'is_admin':False})
+    return user
+
+def getAdmin_email(user_email):
+    user = dal.sbn_users.find_one({'email_address':user_email, 'is_admin':True})
+    return user
+
+def getMember_username(username):
+    user = dal.sbn_users.find_one({'username':username, 'is_admin':False})
+    return user
+
+def getAdmin_username(username):
+    user = dal.sbn_users.find_one({'username':username, 'is_admin':True})
     return user
 
 @login_manager.user_loader
 def load_user(email):
     #return User.get(username)
     #return dal.sbn_users.find_one({'email_address':user_id})
-    return getby_email(email)
+    return getMember_email(email)
 
 @app.route('/')
 @app.route("/index", methods=['GET'])
@@ -172,7 +214,7 @@ def login():
                 bytePwd = txtPassword.encode('utf-8')
                 # mysalt = bcrypt.gensalt()
                 # hashPassword = bcrypt.hashpw(bytePwd,mysalt)
-                users_find = getby_email(form.email_address.data)#load_user(form.email_address.data)#dal.sbn_users.find_one({'email_address':form.email_address.data})
+                users_find = getLogin_username(form.username.data)#load_user(form.email_address.data)#dal.sbn_users.find_one({'email_address':form.email_address.data})
                 if users_find:
                     hashPassword = users_find['password']
 
@@ -223,15 +265,11 @@ def signup():
                     flash("Username "+form.username.data+" already exists please try another","error")
                     return render_template('/auth/signup.html', title='Sign Up User', form=form)
                 else:
-                    # dal.sbn_users.insert_one({'username':txtUsername,'email_address':txtEmail,'full_name':txtFullname,'password':txtPassword,'country':txtCountry,'mobile':txtMobile,'id_passport':txtPassport,'referral_link':txtReferralLink,'referral_code':txtReferralCode,'is_admin':txtIsAdmin,'is_terms':txtIsTerms,'created_date':txtCreatedDate,'is_approved':txtIsApproved,'is_active':txtIsActive,'withdraw_wallet':txtWithdrawWallet,'weekly_reward':txtWeeklyReward,'monthly_reward':txtMonthlyReward, 'jackpot_reward':txtJackpotReward,'direct_reward':txtDirectReward})
-                    
-        
                     txtUsername = form.username.data
                     txtEmail = form.email_address.data
                     txtFullname = form.full_name.data
                     txtCountry = form.country.data
                     txtMobile = form.mobile.data
-                    txtPassport = None
                     txtReferralLink = form.referral_link.data
                     txtReferralCode = datetime.utcnow().strftime('%H%M%S%f')[:-3]
                     # flash(txtReferralCode,"success")
@@ -240,18 +278,10 @@ def signup():
                     mysalt = bcrypt.gensalt()
                     hashPassword = bcrypt.hashpw(bytePwd,mysalt)
                     # if bcrypt.checkpw(txtPassword,hashPassword) - (input,dbpwd)
-                    txtIsAdmin = False
                     txtCreatedDate = datetime.now().replace(microsecond=0)
-                    txtIsApproved = False
-                    txtIsActive = False
-                    txtWithdrawWallet = 0
-                    txtWeeklyReward = 0
-                    txtMonthlyReward = 0
-                    txtJackpotReward = 0
-                    txtDirectReward = 0
                     txtIsTerms = form.is_terms.data
                     
-                    dal.sbn_users.insert_one({'username':txtUsername,'email_address':txtEmail,'full_name':txtFullname,'password':hashPassword,'country':txtCountry,'mobile':txtMobile,'id_passport':txtPassport,'referral_link':txtReferralLink,'referral_code':txtReferralCode,'is_admin':txtIsAdmin,'is_terms':txtIsTerms,'created_date':txtCreatedDate,'is_approved':txtIsApproved,'is_active':txtIsActive,'withdraw_wallet':txtWithdrawWallet,'weekly_reward':txtWeeklyReward,'monthly_reward':txtMonthlyReward, 'jackpot_reward':txtJackpotReward,'direct_reward':txtDirectReward})
+                    addMemberAccount(txtUsername,txtEmail,txtFullname,txtCountry,txtMobile,txtReferralLink,txtReferralCode,hashPassword,txtCreatedDate,txtIsTerms)
                     flash("Sign Up Successfull!","success")
             else:
                 flash(form.errors,"error")
@@ -297,38 +327,51 @@ def admin_panel():
     if session['is_admin'] == True and session['is_approved'] == True:
         # form = UserActivation()
         # return render_template('/adminpanel/users_activation.html', title='Admin Dashboard', form=form)
-        return redirect(url_for('admin_approval'))
+        return redirect(url_for('admin_add'))
    
     return redirect(url_for('logout'))
 
+# ********** ADMIN MANAGER START***********
+
 @app.route('/admin_add/', methods=['GET','POST'])
 def admin_add():
+    if session.get('is_admin') == None or session.get('is_admin') == False or session.get('is_approved') == False:
+        return redirect(url_for('logout'))
     form = AdminUsers()
     if request.method == "POST":
         if form.validate_on_submit():
+                
             if form.email_address.data:
-                find = getby_email(form.email_address.data)
+                find = getAdmin_email(form.email_address.data)
                 if find:
                     flash("Email already registered with our system","error")
-                    return
+                    
             if form.username.data:
-                find = getby_username(form.username.data)
+                find = getAdmin_username(form.username.data)
                 if find:
                     flash("Username aleady registered with our system","error")
-                    return
-
-            addAdminAccount(form.username.data,form.email_address.data,form.full_name.data,form.password.data)
-            flash("Admin account added successfully!","success")
-            flushAdminUsers()
+                    
+            if find is None:
+                addAdminAccount(form.username.data,form.email_address.data,form.full_name.data,form.password.data)
+                flash("Admin account added successfully!","success")
+                flushAdminUsers()
 
     admin_data = getall_admins()
 
     return render_template('/adminpanel/admin_add.html', title='Add Admin', admin_data=admin_data, form=form)
 
-@app.route('/admin_approval/', methods=['GET','POST'])
-def admin_approval():
-    form = AdminApproval()
-    form.submit.label.text = 'Approve'
+@app.route('/admin_manager/<todo>', methods=['GET','POST'])
+def admin_manager(todo):
+    todo = todo
+    form = AdminManager()
+    if todo == 'approval':
+        form.submit.label.text = 'Approve'
+        act = False
+    elif todo == 'disapproval':
+        form.submit.label.text = 'Disapprove'
+        act = True    
+    
+    # form.submit.label.text = 'Approve'
     if request.method == "POST":
         if form.validate_on_submit():
             if form.submit.data:
@@ -336,67 +379,153 @@ def admin_approval():
                     pass
                 else:
                     flash("Please load the desired admin user for approval!","error")
-                    flushAdminApproval()
+                    flushAdminManager()
 
-    admin_data = get_admins(False)
-
-    return render_template('/adminpanel/admin_approval.html', title='Manage Admins', admin_data=admin_data, form=form)
-
-@app.route('/admin_disapproval/', methods=['GET','POST'])
-def admin_disapproval():
-    form = AdminApproval()
-    form.submit.label.text = 'Disapprove'
-    if request.method == "POST":
-        if form.validate_on_submit():
-            if form.submit.data:
-                if form.approve_hidden.data:
-                    pass
-                else:
-                    flash("Please load the desired admin user for disapproval!","error")
-                    flushAdminApproval()
-
-    admin_data = get_admins(True)
-
-    return render_template('/adminpanel/admin_disapproval.html', title='Manage Admins', admin_data=admin_data, form=form)
+    admin_data = get_admins(act)
+    return render_template('/adminpanel/admin_manager.html', title='Manage Admins', admin_data=admin_data, form=form)
 
 @app.route('/admin_load/<uxr>', methods=['GET','POST'])
 def admin_load(uxr):
-    form = AdminApproval()
     uxr = uxr
+    act = request.args.get('act')
+    txtTitle = 'Manage Admins'
+    
+    form = AdminManager()
+
+    if eval(act) == True:
+        form.submit.label.text = 'Disapprove'
+        txtTitle = 'Manage Disapprovals'
+    if eval(act) == False:
+        form.submit.label.text = 'Approve'
+        txtTitle = 'Manage Approvals'
+    
+    if uxr == session.get('username'):
+        flash("Self accounts can not be entertained","error")
+        form.submit.render_kw = {'disabled':'disabled'}
+
+    find_admin = getAdmin_username(uxr)
+    if find_admin:
+        form.approve_hidden.data = find_admin['username']
+        form.username.data = form.approve_hidden.data
+        form.email_address.data = find_admin['email_address']
+        form.full_name.data = find_admin['full_name']
+        
+        form.username.render_kw = {'disabled': 'disabled'}
+        form.email_address.render_kw = {'disabled': 'disabled'}
+        form.full_name.render_kw = {'disabled': 'disabled'}
+
     if request.method == "POST":
         if form.validate_on_submit():
             if form.submit.data:
                 if form.submit.label.text == "Approve":
                     approve = True
-                    approveAdminAccount(uxr,approve)
-                    flash("Admin has been approved for login","success")
-                    flushAdminApproval()
+                    approveAdminAccount(form.username.data,approve)
+                    flash("Admin account has been approved for login","success")
+                    flushAdminManager()
                 if form.submit.label.text == "Disapprove":
                     approve = False
-                    approveAdminAccount(uxr,approve)
-                    flash("Admin has been disapproved for login","success")
-                    flushAdminApproval()
- 
-    find = getby_username(form.username.data)
-    if find:
-        form.approve_hidden.data = find['username']
-        form.username.data = form.approve_hidden.data
-        form.email_address.data = find['email_address']
-        form.full_name.data = find['full_name']
-        form.username.disable()
-        form.email_address.disable()
-        form.full_name.disable()
+                    approveAdminAccount(form.username.data,approve)
+                    flash("Admin account has been disapproved for login","success")
+                    flushAdminManager()
+        else:
+            flash(form.errors,"error")
     
-    if form.submit.label.text == "Approve":
-        admin_data = get_admins(False)
-        txtUrl = '/adminpanel/admin_approval.html'
-    else:
-        admin_data = get_admins(True)
-        txtUrl = '/adminpanel/admin_disapproval.html'
     
-    return render_template(txtUrl, title='Manage Admins', admin_data=admin_data, form=form)
+    admins = get_admins(eval(act))
+    return render_template('/adminpanel/admin_manager.html', title=txtTitle, admin_data=admins, form=form)
     
+# ********** ADMIN MANAGER END***********
 
+# ********** MEMBER MANAGER START***********
+
+@app.route('/member_all/', methods=['GET'])
+def member_all():
+    form = MemberManager()
+    member_data = getall_members()
+    return render_template('/adminpanel/member_all.html', title='Member Accounts', member_data=member_data, form=form)
+
+
+@app.route('/member_manager/<todo>', methods=['GET','POST'])
+def member_manager(todo):
+    todo = todo
+    form = MemberManager()
+    txtTitle = 'Manage Members'
+    if todo == 'approval':
+        form.submit.label.text = 'Approve'
+        txtMsg = 'Please load the desired member account for approval!'
+        txtTitle = 'Member Approvals'
+    elif todo == 'activation':
+        form.submit.label.text = 'Activate'
+        txtMsg = 'Please load the desired member account for activation!'
+        txtTitle = 'Member Activation'
+        
+    if request.method == "POST":
+        if form.validate_on_submit():
+            if form.submit.data:
+                if form.member_hidden.data:
+                    pass
+                else:
+                    flash(txtMsg,"error")
+                    flushMemberManager()
+
+    member_data = get_memberManager(todo)
+    return render_template('/adminpanel/member_manager.html', title=txtTitle, member_data=member_data, form=form)
+
+
+@app.route('/member_load/<uxr>', methods=['GET','POST'])
+def member_load(uxr):
+    uxr = uxr
+    act = request.args.get('act')
+    sts = request.args.get('sts')
+    txtTitle = 'Manage Members'
+    todo = 'approval'
+    form = MemberManager()
+
+    
+    if eval(sts) == False:
+        form.submit.label.text = 'Activate'
+        todo = 'activation'
+        txtTitle = 'Member Activation'
+    if eval(act) == False:
+        form.submit.label.text = 'Approve'
+        todo = 'approval'
+        txtTitle = 'Member Approvals'
+
+
+    if uxr == session.get('username'):
+        flash("Self accounts can not be entertained","error")
+        form.submit.render_kw = {'disabled':'disabled'}
+
+    find_member = getMember_username(uxr)
+    if find_member:
+        form.member_hidden.data = find_member['username']
+        form.username.data = form.member_hidden.data
+        form.email_address.data = find_member['email_address']
+        form.full_name.data = find_member['full_name']
+        
+        form.username.render_kw = {'disabled': 'disabled'}
+        form.email_address.render_kw = {'disabled': 'disabled'}
+        form.full_name.render_kw = {'disabled': 'disabled'}
+
+    if request.method == "POST":
+        if form.validate_on_submit():
+            if form.submit.data:
+                if form.submit.label.text == "Approve":
+                    approveMemberAccount(form.username.data,True)
+                    flash("Member account has been approved for login","success")
+                    flushMemberManager()
+                if form.submit.label.text == "Activate":
+                    activeMemberAccount(form.username.data,True)
+                    flash("Member account has been activated for earning","success")
+                    flushMemberManager()
+        else:
+            flash(form.errors,"error")
+    
+    
+    mems = get_memberManager(todo)
+    return render_template('/adminpanel/member_manager.html', title=txtTitle, member_data=mems, form=form)
+
+# ********** MEMBER MANAGER END***********
 
 # ********** ANNOUNCEMENT START***********
 
@@ -620,3 +749,5 @@ def jackpot():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+

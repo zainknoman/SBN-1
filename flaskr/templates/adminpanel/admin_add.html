@@ -8,12 +8,17 @@
 		<h3>Add Admin</h3>
 	</div>
 	<div class="card-body">
-		
-
+		<form method="POST" onSubmit="return confirm('Please confirm to add new admin account?');">
+			{{ form.csrf_token }}
 			<div class="row">
-
+				<div class="col-sm-3">
+					Enter Unique {{form.username.label(class='form-label')}}
+				</div>
 				<div class="col-sm-3">
 					{{form.username(class='form-control', placeholder='Username')}}
+				</div>
+				<div class="col-sm-3">
+					{{form.full_name.label(class='form-label')}}
 				</div>
 				<div class="col-sm-3">
 					{{form.full_name(class='form-control', placeholder='Full Name')}}
@@ -22,7 +27,13 @@
 
 			<div class="row">
 				<div class="col-sm-3">
+					Set {{form.password.label(class='form-label')}}
+				</div>
+				<div class="col-sm-3">
 					{{form.password(class='form-control', placeholder='Password *')}}
+				</div>
+				<div class="col-sm-3">
+					Re enter {{form.confirm_pass.label(class='form-label')}}
 				</div>
 				<div class="col-sm-3">
 					{{form.confirm_pass(class='form-control', placeholder='Confirm Password *')}}
@@ -31,18 +42,22 @@
 
 			<div class="row">
 				<div class="col-sm-3">
-						{{form.email_address(class='form-control', placeholder='Email *')}}
+					New {{form.email_address.label(class='form-label')}}
+				</div>
+				<div class="col-sm-3">
+					{{form.email_address(class='form-control', placeholder='Email *')}}
+				</div>
+				<div class="col-sm-3">
+					To create new admin account:
 				</div>
 				<div class="col-sm-3" >
-					<span>&nbsp</span>
-						<form method="POST" onSubmit="return confirm('Please confirm to add new admin account?');">
-							{{ form.csrf_token }}
-							{{form.submit(class='btn btn-danger')}}
-							<!-- <button type="submit" class="btn btn-primary mb-2">Approve</button> -->
-						</form>
+					
+					{{form.submit(class='btn btn-danger')}}
+					<!-- <button type="submit" class="btn btn-primary mb-2">Approve</button> -->
+						
 				</div>
 			</div>
-		
+		</form>
 	</div>
 </div>
 
@@ -69,7 +84,7 @@
 					<td>{{data.created_date}}</td>
 					<td>{{data.updated_date}}</td>
 					<td class='col-auto'>{{data.username}}</td>
-					<td>{{data.is_approve}}</td>
+					<td>{{data.is_approved}}</td>
 					
 				</tr>
 				{% endfor %}

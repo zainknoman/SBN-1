@@ -124,9 +124,9 @@
             </button>
             <div class="collapse show" id="admin-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                <li><a href="{{url_for('admin_add')}}" class="link-dark rounded">Add Admin</a></li>
-                <li><a href="{{url_for('admin_approval')}}" class="link-dark rounded">Admin Approval</a></li>
-                <li><a href="{{url_for('admin_disapproval')}}" class="link-dark rounded">Admin Disapproval</a></li>
+                <li><a href="{{url_for('admin_add')}}" class="link-dark rounded">Add New Admin</a></li>
+                <li><a href="{{url_for('admin_manager', todo='approval')}}" class="link-dark rounded">Approval</a></li>
+                <li><a href="{{url_for('admin_manager', todo='disapproval')}}" class="link-dark rounded">Disapproval</a></li>
 
               </ul>
             </div>
@@ -138,9 +138,11 @@
             </button>
             <div class="collapse show" id="member-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                <li><a href="{{url_for('member_approval')}}" class="link-dark rounded">Member Approval</a></li>
-                <li><a href="{{url_for('member_activation')}}" class="link-dark rounded">Member Activation</a></li>
-
+                <li><a href="{{url_for('member_all')}}" class="link-dark rounded">All Members</a></li>
+                <li><a href="{{url_for('member_manager', todo='approval')}}" class="link-dark rounded">Unapproved</a></li>
+                <li><a href="{{url_for('member_manager', todo='activation')}}" class="link-dark rounded">Inactive</a></li>
+                <li><a href="{{url_for('member_close', todo='approval')}}" class="link-dark rounded">Approval</a></li>
+                <li><a href="{{url_for('member_close', todo='activation')}}" class="link-dark rounded">Activation</a></li>
               </ul>
             </div>
           </li>
@@ -211,7 +213,7 @@
 
   <div class="container">
 
-    
+      
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
       <ul >
