@@ -63,7 +63,7 @@
 					<td>{{data.is_approved}}</td>
 					<td>{{data.is_active}}</td>
 					<td>
-						<form method="POST" action="{{ url_for('member_load', uxr=data.username,act=data.is_approved,sts=data.is_active) }}">
+						<form method="POST" action="{{ url_for('member_load', uxr=data._id,status=todo) }}">
 							{{ form.csrf_token }}
               				{{form.load(class='btn btn-primary')}}
             			</form>

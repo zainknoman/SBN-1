@@ -114,35 +114,35 @@
           <!-- <svg class="bi me-2" width="30" height="24"><use xlink:href="#bootstrap"/></svg> -->
           <img src="../static/logo-color-sm.png">
           <span>&nbsp;</span>
-          <span class="fs-5 fw-semibold">Welcome {{session['full_name']}}</span>
+          <span class="fs-5 fw-semibold">Hi {{session['full_name']}}</span>  
         </a>
 
         <ul class="list-unstyled ps-0">
           <li class="mb-1">
-            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#admin-collapse" aria-expanded="true">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#admin-collapse" aria-expanded="false">
               Admin Accounts
             </button>
-            <div class="collapse show" id="admin-collapse">
+            <div class="collapse" id="admin-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                 <li><a href="{{url_for('admin_add')}}" class="link-dark rounded">Add New Admin</a></li>
-                <li><a href="{{url_for('admin_manager', todo='approval')}}" class="link-dark rounded">Approval</a></li>
-                <li><a href="{{url_for('admin_manager', todo='disapproval')}}" class="link-dark rounded">Disapproval</a></li>
+                <li><a href="{{url_for('admin_manager', todo='approval')}}" class="link-dark rounded">Unapproved Admins</a></li>
+                <li><a href="{{url_for('admin_manager', todo='disapproval')}}" class="link-dark rounded">Approved Admins</a></li>
 
               </ul>
             </div>
           </li>
           
           <li class="mb-1">
-            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#member-collapse" aria-expanded="true">
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#member-collapse" aria-expanded="false">
               Member Accounts
             </button>
             <div class="collapse show" id="member-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                 <li><a href="{{url_for('member_all')}}" class="link-dark rounded">All Members</a></li>
-                <li><a href="{{url_for('member_manager', todo='approval')}}" class="link-dark rounded">Unapproved</a></li>
-                <li><a href="{{url_for('member_manager', todo='activation')}}" class="link-dark rounded">Inactive</a></li>
-                <li><a href="{{url_for('member_close', todo='approval')}}" class="link-dark rounded">Approval</a></li>
-                <li><a href="{{url_for('member_close', todo='activation')}}" class="link-dark rounded">Activation</a></li>
+                <li><a href="{{url_for('member_manager', todo='approval')}}" class="link-dark rounded">Unapproved Members</a></li>
+                <li><a href="{{url_for('member_manager', todo='activation')}}" class="link-dark rounded">Inactive Members</a></li>
+                <li><a href="{{url_for('member_manager', todo='disapproval')}}" class="link-dark rounded">Approved Members</a></li>
+                <li><a href="{{url_for('member_manager', todo='deactivation')}}" class="link-dark rounded">Active Members</a></li>
               </ul>
             </div>
           </li>
@@ -151,7 +151,7 @@
             <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
               Dashboard
             </button>
-            <div class="collapse" id="dashboard-collapse">
+            <div class="collapse show" id="dashboard-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                 <li><a href="{{url_for('weekly_reward')}}" class="link-dark rounded">Weekly Package Rewards</a></li>
                 <li><a href="{{url_for('monthly_reward')}}" class="link-dark rounded">Monthly Giveaway</a></li>
@@ -197,7 +197,7 @@
         <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#exit-collapse" aria-expanded="false">
           Exit
         </button>
-        <div class="collapse" id="exit-collapse">
+        <div class="collapse show" id="exit-collapse">
           <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
             <li><a href="{{url_for('logout')}}" class="link-dark rounded">Logout</a></li>
             <!-- <li><a href="#" class="link-dark rounded">Profile</a></li>

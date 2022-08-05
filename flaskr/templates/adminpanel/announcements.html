@@ -28,8 +28,10 @@
      </div> -->
    </div>
    <div class="col-sm-2">
+
      <!-- <button type="submit" class="btn btn-danger mb-2">Impact</button> -->
      {{form.submit(class='btn btn-danger')}}
+
    </div>
  </div>
 </form>
@@ -57,31 +59,29 @@
       </thead>
       <tbody>
         {% set ns = namespace(i = 0) %}
-        {% for ann in sbn_ann %}
+        {% for data in ann_data %}
         <tr>
           {% set ns.i = ns.i +1 %}
           <th scope="row">{{ns.i}}</th>
-          <td>{{ann.createdDate}}</td>
-          <td class='col-auto'>{{ann.announcement}}</td>
-          {% if ann.isactive == 1 %}
-          <td>True</td>
-          {% else %}
-          <td>False</td>
-          {% endif %}
+          <td>{{data.createdDate}}</td>
+          <td class='col-auto'>{{data.announcement}}</td>
+          <td>{{data.isactive}}</td>
+          
           <td>
-            <!-- <button type="button" class="btn btn-primary" value="{{ann._id}}">Load</button></td> -->
-            <form method="POST" action="{{ url_for('announcement_load', id=ann._id) }}">
+            <!-- <button type="button" class="btn btn-primary" value="{{data._id}}">Load</button></td> -->
+            <form method="POST" action="{{ url_for('announcement_load', ob=data._id) }}">
+              {{ form.csrf_token }}
               {{form.load(class='btn btn-primary')}}
             </form>
-          
-        </tr>
-        {% endfor %}
-        
-      </tbody>
-    </table>
+
+          </tr>
+          {% endfor %}
+
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
 
 
-{% endblock content_admin %}
+  {% endblock content_admin %}
 

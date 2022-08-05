@@ -50,6 +50,7 @@
           <td>
             <!-- <button type="button" class="btn btn-primary" value="{{sbn._id}}">Load</button> -->
             <form method="POST" action="{{ url_for('wallet_load', wallet=sbn.wallet) }}">
+              {{ form.csrf_token }}
               {{form.load(class='btn btn-primary')}}
             <!-- <input type="submit" class="btn btn-primary" value="Load")"> -->
           </form>

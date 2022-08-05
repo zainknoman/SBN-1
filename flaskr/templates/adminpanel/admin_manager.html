@@ -59,7 +59,7 @@
 					<td class='col-auto'>{{data.username}}</td>
 					<td>{{data.is_approved}}</td>
 					<td>
-						<form method="POST" action="{{ url_for('admin_load', uxr=data.username,act=data.is_approved) }}">
+						<form method="POST" action="{{ url_for('admin_load', uxr=data._id,act=data.is_approved) }}">
 							{{ form.csrf_token }}
               				{{form.load(class='btn btn-primary')}}
             			</form>

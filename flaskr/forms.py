@@ -31,26 +31,6 @@ class RegistrationForm(FlaskForm):
 	referral_link = StringField('Referral Link', validators=[Length(min=0,max=10)])
 	signup = SubmitField('Sign Up')
 
-class MemberActivation(FlaskForm):
-	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
-	email_address = StringField('Email Address', validators=[DataRequired(), Email()])
-	full_name = StringField('Full Name', validators=[DataRequired(), Length(min=5,max=100)])
-	createdDate = StringField('Created On')
-	activeDate = StringField('Activated On')
-	is_active = BooleanField('Is Active')
-	load = SubmitField('Load')
-	activate = SubmitField('Activate')
-
-class MemberApproval(FlaskForm):
-	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
-	email_address = StringField('Email Address', validators=[DataRequired(), Email()])
-	full_name = StringField('Full Name', validators=[DataRequired(), Length(min=5,max=100)])
-	createdDate = StringField('Created On')
-	updatedDate = StringField('Activated On')
-	is_approved = BooleanField('Is Approved')
-	load = SubmitField('Load')
-	approve = SubmitField('Approve')
-
 class AdminUsers(FlaskForm):
 	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
 	email_address = StringField('Email Address', validators=[DataRequired(), Email()])
@@ -82,9 +62,7 @@ class MemberManager(FlaskForm):
 
 class LoginForm(FlaskForm):
 	username = StringField('Username', validators=[DataRequired(), Length(min=5,max=15)])
-	# email_address = StringField('Email', validators=[DataRequired(), Email()])
 	password = PasswordField('Password', validators=[DataRequired(), Length(min=8,max=15)])
-	# remember = BooleanField('Remember Me')
 	login = SubmitField('Login')
 
 
@@ -108,10 +86,8 @@ class ProfileForm(FlaskForm):
 	submit = SubmitField('Impact')
 
 class AnnouncementsForm(FlaskForm):
-	
-	createdDate = StringField('Created On', validators=[])
 	announcement = StringField('Announcements', validators=[DataRequired()])
-	isactive = BooleanField('Active', validators=[])
+	isactive = BooleanField('Active')
 	anna_hidden = HiddenField()
 	submit = SubmitField('Add')
 	load = SubmitField('Load')

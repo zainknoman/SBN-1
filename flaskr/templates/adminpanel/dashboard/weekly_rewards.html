@@ -8,7 +8,9 @@
 		<h3>Weekly Rewards Giveaway</h3>
 	</div>
 	<div class="card-body">
-		<form>
+		<form method="POST" onSubmit="return confirm('Please confirm to assign weekly reward to all members?');">
+			<!-- <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/> -->
+			{{ form.csrf_token }}
 
 			<div class="row">
 				<div class="col-sm-2">
@@ -21,7 +23,8 @@
 					%
 				</div>
 				<div class="col-sm-2" >
-					<button type="submit" class="btn btn-danger mb-2">Impact to all</button>
+					<!-- <button type="submit" class="btn btn-danger mb-2">Impact to all</button> -->
+					{{form.submit(class='btn btn-danger')}}
 				</div>
 				
 			</div>
@@ -37,24 +40,24 @@
 			<thead class="thead-light">
 				<tr>
 					<th scope="col">#</th>
-					<th scope="col">Created On</th>
-					<th scope="col-auto">Activation Date</th>
+					<!-- <th scope="col">Created On</th> -->
+					<th scope="col">Activation Date</th>
 					<th scope="col">Username</th>
 					<th scope="col">Full Name</th>
-					<th scope="col">Package</th>
+					<th scope="col-auto">Packages</th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for sbn in sbn_weekly %}
-				{% if sbn.is_admin == false and sbn.is_active == true %}
+				
 				<tr>
 					<th scope="row">{{loop.index}}</th>
-					<td>{{sbn.created_date}}</td>
+					<!-- <td>{{sbn.created_date}}</td> -->
 					<td>{{sbn.active_date}}</td>
-					<td class='col-auto'>{{sbn.username}}</td>
+					<td >{{sbn.username}}</td>
 					<td>{{sbn.full_name}}</td>
 					
-					<td>
+					<td class='col-auto'>
 						{% for pkg in sbn.packages %}
 						{{pkg.package_id}}<br>
 						{% endfor %}
@@ -62,7 +65,7 @@
 					
 					
 				</tr>
-				{% endif %}
+				
 				{% endfor %}
 
 			</tbody>
