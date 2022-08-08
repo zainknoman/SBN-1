@@ -32,17 +32,41 @@ db.<Collection_Name>.drop()
 
 db.dropDatabase()
 
-
-{username:"hayyan",email_address:"fagholic@gmail.com",full_name:"Hayyan Mustafa",country:null,mobile:null,id_passport:null,referral_link:null,referral_code:"4cdca3fa",password:"sbn123",is_admin:false,created_date:new Date(),is_approved:false,is_active:false,withdraw_wallet:0},
-{username:"admin",email_address:"admin@sbn.com",full_name:"Administrator",country:"CANADA",mobile:null,id_passport:null,referral_link:null,referral_code:null,password:"admin123",is_admin:true,created_date:new Date(),is_approved:true,is_active:true,withdraw_wallet:0},
-{username:"zafar",email_address:"zafar@hotmail.com",full_name:"Muhammad Zafar",country:null,mobile:null,id_passport:null,referral_link:"4cdca3fa",referral_code:"5dbae9La",password:"sbn123",is_admin:false,created_date:new Date(),is_approved:true,is_active:true,withdraw_wallet:0}
-
-adding column with future day
+(adding column with future day)
  db.sbn_users.aggregate([{$project:{active_date:{$dateAdd:{startDate:'$created_date',unit:'day',amount:7}}}},{$merge:'sbn_users'}])
 
 
+(Signup Queries null-None true/false - True/False)
+Administrator:
+{username:"admin",email_address:"admin@sbn.com",full_name:"Administrator",password:"admin123",is_admin:true,created_date:datetime.now().replace(microsecond=0),updated_date:null,is_approved:true,is_active:null}
+Users:
+{username:"hayyan",email_address:"fagholic@gmail.com",full_name:"Hayyan",country:"Pakistan",mobile:null,id_passport:null,referral_link:null,referral_code:datetime.utcnow().strftime('%H%M%S%f')[:-3],password:hashPassword,is_admin:false,is_terms:true,created_date:datetime.now().replace(microsecond=0),updated_date=null, active_date:null,is_approved:false,is_active:false,packages:None,withdraw_wallet:0, weekly_reward:0, monthly_reward:0, jackpot_reward:0, direct_reward:0}
 
+(User activation Query)
+ db.sbn_users.find({$and:[{is_admin:{$eq:false}},{$or:[{is_approved:{$eq:false}},{is_active:{$eq:false}}]}]})
 
+(Show only specific columns)
+SELECT headline, author FROM article;
+db.article.aggregate(
+  { $project : { headline : 1, author : 1 } }
+);
 
+(Sorting)
+SELECT * FROM article ORDER BY headline ASC;
+db.article.aggregate(
+  { $sort : { headline : 1 } }
+);
+
+(Filter)
+SELECT * FROM article WHERE author = "Joe Bloggs";
+db.article.aggregate(
+  { $filter : { author : { $eq : "Joe Bloggs" } } }
+);
+{ status: "A", qty: { $lt: 30 } } //2 fields
+{ name: { $not: { $eq: "Andrea Le" } } } //not condition
+{ version: { $lte: 4 } } //comparision ($eq,$gt,$gte,$in,$lt,$lte,$ne,$nin-non in array)
+{ dateCreated: { $gt: Date('2000-06-22') } } //date
+{ scores: { $elemMatch: { $gt: 80, $lt: 90 } } } //array
+{_id: UUID('002636e1-10cd-4c8b-a9a7-01b7bfd3899c')} //UUID
 
 
