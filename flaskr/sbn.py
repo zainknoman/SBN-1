@@ -41,15 +41,41 @@ dal = mongodb_client.db
 # login_manager.login_message = "Please login to access the page"
 
 def generateAdminAccount():
-    txtPassword = "admin@1234"
-    bytePwd = txtPassword.encode('utf-8')
-    mysalt = bcrypt.gensalt()
-    hashPassword = bcrypt.hashpw(bytePwd,mysalt)
-    dal.sbn_users.insert_one({'username':"admin",'email_address':"admin@sbn.com",'full_name':"Administrator",'password':hashPassword,'is_admin':True,'created_date':datetime.now().replace(microsecond=0),'updated_date':datetime.now().replace(microsecond=0),'is_approved':True,'is_active':None})
+    find_admin = dal.sbn_users.find_one({'username':'admin'})
+    if not find_admin:
+        dal.create_collection("sbn_users")
+        txtPassword = "admin@1234"
+        bytePwd = txtPassword.encode('utf-8')
+        mysalt = bcrypt.gensalt()
+        hashPassword = bcrypt.hashpw(bytePwd,mysalt)
+        dal.sbn_users.insert_one({'username':"admin",'email_address':"admin@sbn.com",'full_name':"Administrator",'password':hashPassword,'is_admin':True,'created_date':datetime.now().replace(microsecond=0),'updated_date':datetime.now().replace(microsecond=0),'is_approved':True,'is_active':None})
 
+def generatePackages():
+    find_packages = dal.sbn_packages.find_one({'package_id':'pkg500'})
+    if not find_packages:
+        dal.create_collection("sbn_packages")
+        dal.sbn_packages.insert_one({'package_id':"pkg500",'package':500,'package_date':datetime.now().replace(microsecond=0)})
+        dal.sbn_packages.insert_one({'package_id':"pkg1000",'package':1000,'package_date':datetime.now().replace(microsecond=0)})
+        dal.sbn_packages.insert_one({'package_id':"pkg2000",'package':2000,'package_date':datetime.now().replace(microsecond=0)})
+        dal.sbn_packages.insert_one({'package_id':"pkg3000",'package':3000,'package_date':datetime.now().replace(microsecond=0)})
+        dal.sbn_packages.insert_one({'package_id':"pkg5000",'package':5000,'package_date':datetime.now().replace(microsecond=0)})
 
-
-
+def generateRewards():
+    find_reward = dal.reward_config.find_one({'reward':'Weekly'})
+    if not find_reward:
+        dal.create_collection("reward_config")
+        dal.reward_config.insert_one({'reward':"Weekly",'percentage':1,'createdDate':datetime.now().replace(microsecond=0),'updatedDate':None})
+        dal.reward_config.insert_one({'reward':"Monthly",'percentage':1,'createdDate':datetime.now().replace(microsecond=0),'updatedDate':None})
+        dal.reward_config.insert_one({'reward':"Member",'percentage':1,'createdDate':datetime.now().replace(microsecond=0),'updatedDate':None})
+        
+def generateWallet():
+    # find_wallet = dal.sbn_wallet.find()
+    # if not find_wallet:
+    try:
+        dal.create_collection("sbn_wallet")
+        dal.sbn_wallet.insert_one({'wallet':'65be61ace4c4e656af472288a7202919','updatedDate':datetime.now().replace(microsecond=0)})
+    except:
+        return
 
 def getall_members():
     sbn_data = dal.sbn_users.find({'is_admin':False})
@@ -153,6 +179,16 @@ def load_user(email):
     #return User.get(username)
     #return dal.sbn_users.find_one({'email_address':user_id})
     return getMember_email(email)
+
+
+@app.route("/launch_config", methods=['GET'])
+def launch_config():
+    generateAdminAccount()
+    generatePackages()
+    generateRewards()
+    generateWallet()
+
+    return redirect(url_for('login'))
 
 @app.route('/')
 @app.route("/index", methods=['GET'])
@@ -450,7 +486,7 @@ def reward_load(reward):
     if request.method == "POST":
         if form.validate_on_submit():
             if form.submit.data:
-                dal.reward_config.find_one_and_update({'reward':reward},{'$set':{'percentage':form.percentage.data,'createdDate':datetime.now().replace(microsecond=0)}})
+                dal.reward_config.find_one_and_update({'reward':reward},{'$set':{'percentage':form.percentage.data,'updatedDate':datetime.now().replace(microsecond=0)}})
                 flash("Reward updated "+reward,"success")
                 form.percentage.data = ''
     
@@ -494,7 +530,7 @@ def wallet_load(wallet):
     if request.method == "POST":
         if form.validate_on_submit():
             if form.submit.data:
-                dal.sbn_wallet.find_one_and_update({'wallet':wallet},{'$set':{'wallet':form.sbn_wallet.data}})
+                dal.sbn_wallet.find_one_and_update({'wallet':wallet},{'$set':{'wallet':form.sbn_wallet.data,'updatedDate':datetime.now().replace(microsecond=0)}})
                 flash("Wallet updated "+form.sbn_wallet.data,"success")
     
     find_wallet = dal.sbn_wallet.find_one({'wallet':wallet})
@@ -514,7 +550,8 @@ def weekly_reward():
     form = WeeklyRewardForm()
     sbn_weekly = get_activeMembers()
     reward_weekly = dal.reward_config.find_one({'reward':'Weekly'})
-    form.percentage.data = reward_weekly['percentage']
+    if reward_weekly:
+        form.percentage.data = reward_weekly['percentage']
     return render_template('/adminpanel/dashboard/weekly_rewards.html', title='Weekly Rewards', sbn_weekly=sbn_weekly, form=form)
 
 @app.route('/monthly_reward/', methods=['GET','POST'])
