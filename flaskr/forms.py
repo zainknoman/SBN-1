@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, HiddenField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, HiddenField,SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
@@ -102,7 +102,7 @@ class PackageConfigForm(FlaskForm):
 class RewardConfigForm(FlaskForm):
 	createdDate = StringField('Created On', validators=[])
 	reward = StringField('Reward Type')
-	percentage = StringField('Reward Percentage', validators=[DataRequired(), Length(min=1,max=2)])
+	percentage = StringField('Reward Percentage', validators=[DataRequired(), Length(min=1,max=3)])
 	reward_hidden = HiddenField()
 	submit = SubmitField('Impact')
 	load = SubmitField('Load')
@@ -114,6 +114,19 @@ class WalletConfigForm(FlaskForm):
 	submit = SubmitField('Impact')
 	load = SubmitField('Load')
 
+class MonthlyRewardForm(FlaskForm):
+	percentage = StringField('Percentage in numbers', validators=[DataRequired(), Length(min=1,max=2)])
+	submit = SubmitField('Impact to all')
+	load = BooleanField()
+
 class WeeklyRewardForm(FlaskForm):
 	percentage = StringField('Percentage in numbers', validators=[DataRequired(), Length(min=1,max=2)])
 	submit = SubmitField('Impact to all')
+
+class JackpotForm(FlaskForm):
+	username = StringField('Username *')
+	multiplier = StringField('no. of times', validators=[DataRequired()])
+	pkg_amount = StringField('Package Amount')
+	submit = SubmitField('Jackpot Launcher')
+	load = SubmitField('Load')
+	

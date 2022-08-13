@@ -9,20 +9,22 @@
 		<h3>Monthly Rewards Giveaway</h3>
 	</div>
 	<div class="card-body">
-		<form>
+		<form method="POST" onSubmit="return confirm('Please confirm these members for Monthly luckydraw!!!');">
+			{{ form.csrf_token }}
 
 			<div class="row">
 				<div class="col-sm-2">
 					Monthly reward @
 				</div>
-				<div class="col-sm-3">
+				<div class="col-sm-2">
 					{{form.percentage(placeholder='', class='form-control')}}
 				</div>
-				<div class="col-sm-1">
-					%
+				<div class="col-sm-4">
+					% of <span class="badge bg-light text-warning">{{pkg}}</span> package
 				</div>
 				<div class="col-sm-2" >
-					<button type="submit" class="btn btn-danger mb-2">Impact Selected</button>
+					<!-- <button type="submit" class="btn btn-danger mb-2">Impact Selected</button> -->
+					{{form.submit(class='btn btn-danger')}}
 				</div>
 				
 			</div>
@@ -38,27 +40,26 @@
 		<table class="table table-hover">
 			<thead class="thead-light">
 				<tr>
-					<th colspan="8">
-						<div class="dropdown" align="right">
-							<form>
-								<button class="btn btn-primary  dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-									Select Package
-								</button>
+					<th scope="col"></th>
+					<th scope="col"></th>
+					<th scope="col-auto"></th>
+					<th scope="col"></th>
+					<th scope="col"></th>
+					<th scope="col-auto">
+						<form action="{{url_for('monthly_reward')}}">
+							<label for="package">Package:</label>
+							<select name="pack" id="pack">
+								{% for data in sbn_packages %}
+								<option value="{{data.package_id}}">{{data.package_id}}</option>
+								{% endfor %}
 
-								<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-									{% for pkg in sbn_packages %}
-									<li>
-										<button  type="button" id="{{pkg.package}}">
-											{{pkg.package_id}}
-										</button>
-										<!-- <a class="dropdown-item" href="#">{{pkg.package_id}}</a> -->
-									</li>
-									{% endfor %}
+							</select>
 
-								</ul>
-							</form>
-						</div>
+							<input type="submit" value="Select" class="btn btn-toggle">
+						</form>
 					</th>
+					<th scope="col"></th>
+					
 				</tr>
 				<tr>
 					<th scope="col">#</th>
@@ -72,27 +73,31 @@
 			</thead>
 			<tbody>
 				<form>
-				{% for usr in sbn_monthly %}
-				{% if usr.is_admin == false and usr.is_active == true %}
-				<tr>
-					<th scope="row">{{loop.index}}</th>
-					<td>{{usr.created_date}}</td>
-					<td>{{usr.active_date}}</td>
-					<td class='col-auto'>{{usr.username}}</td>
-					<td>{{usr.full_name}}</td>
-					<td>
-						{% for pkg in usr.packages %}
-						{{pkg.package_id}}<br>
-						{% endfor %}
-					</td>
-					<td>
-						<div class="form-check mb-2">
-							<input class="form-check-input" type="checkbox" id="{{usr._id}}">
-						</div>
-					</td>
-				</tr>
-				{% endif %}
-				{% endfor %}
+					{% for data in sbn_members %}
+					
+					<tr>
+						<th scope="row">{{loop.index}}</th>
+						<td>{{data.created_date}}</td>
+						<td>{{data.active_date}}</td>
+						<td class='col-auto'>{{data.username}}</td>
+						<td>{{data.full_name}}</td>
+						<td>
+							{% for pkg in data.packages %}
+							{{pkg}}<br>
+							{% endfor %}
+						</td>
+						<td>
+							<!-- <div class="form-check mb-2">
+								<input class="form-check-input" type="checkbox" id="{{data._id}}">
+							</div> -->
+							<form method="POST" action="{{ url_for('jackpot_load', uxr=data.username,pack=pkg) }}">
+				              {{ form.csrf_token }}
+				              {{form.load(class='btn btn-primary')}}
+				            </form>
+						</td>
+					</tr>
+					
+					{% endfor %}
 				</form>
 
 			</tbody>

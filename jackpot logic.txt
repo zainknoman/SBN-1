@@ -1,0 +1,39 @@
+jackpot_data
+createdDate|currentQuarter|username|email|amount|status
+
+jackpot_history
+createdDate|currentQuarter|username|email|amount|status
+
+if systemDate < jan and systemDate > oct
+	currentQuarter = 4
+	currentMonth = Oct
+	nextQuarter = 1
+	nextMonth = Jan
+if systemDate < oct and systemDate > july
+	currentQuarter = 3
+	currentMonth = July
+	nextQuarter = 4
+	nextMonth = Oct
+if systemDate < july and systemDate > apr
+	currentQuarter = 2
+	currentMonth = Apr
+	nextQuarter = 3
+	nextMonth = July
+if systemDate < apr and systemDate > jan
+	currentQuarter = 1
+	currentMonth = jan
+	nextQuarter = 2
+	nextMonth = apr
+
+if current_quarter ne currentQuarter:
+dal.jackpot_data.remove({})
+dal.jackpot_data.insert_one('createdDate':,'current_quarter':,'username':,'email_address':,'amount':,'status':true)
+
+
+dal.jackpot_history.insert_one('createdDate':,'currentQuarter':,'username':,'email_address':,'amount':,'status':true)
+
+
+jan
+apr
+july
+oct

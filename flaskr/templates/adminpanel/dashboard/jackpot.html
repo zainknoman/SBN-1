@@ -8,20 +8,30 @@
     <h3>Jackpot</h3>
   </div>
   <div class="card-body">
-    <form>
+    <form method="POST" onSubmit="return confirm('Please confirm this member for Jackpot!!!');">
+      <!-- <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/> -->
+      {{ form.csrf_token }}
 
       <div class="row">
         <div class="col-sm-3">
-          <label  class="form-label" >Please enter for (username)</label>
+          <label  class="form-label" >Please enter for </label>
+          <span class="badge bg-light text-dark">
+          {{form.username.label}}
+        </span>
         </div>
         <div class="col-sm-3">
-          <input type="text-box" class="form-control">
+          <!-- <input type="text-box" class="form-control"> -->
+          {{form.multiplier(class = 'form-control', placeholder='enter no. of times *')}}
         </div>
         <div class="col-sm-3">
-          x package amount
+          x
+          <span class="badge bg-light text-warning">
+            {{form.pkg_amount.label(placeholder='package amount')}}
+          </span>
         </div>
         <div class="col-sm-2" >
-          <button type="submit" class="btn btn-danger mb-2">Jackpot Launcher</button>
+          <!-- <button type="submit" class="btn btn-danger mb-2">Jackpot Launcher</button> -->
+          {{form.submit(class='btn btn-danger')}}
         </div>
         
       </div>
@@ -30,11 +40,34 @@
 </div>
 
 <div class="card scrol scrollbar-cyan thin">
-  
+
   <div class="card-body">
     <h5 class="card-title">Member List (Activated)</h5>
     <table class="table table-hover">
       <thead class="thead-light">
+        <tr>
+          <th scope="col"></th>
+          <th scope="col"></th>
+          <th scope="col"></th>
+          <th scope="col"></th>
+          <th scope="col"></th>
+
+          <th scope="col-auto">
+            <form action="{{url_for('jackpot')}}">
+              <label for="package">Package:</label>
+              <select name="pack" id="pack">
+                {% for data in sbn_packages %}
+                <option value="{{data.package_id}}">{{data.package_id}}</option>
+                {% endfor %}
+                
+              </select>
+              
+              <input type="submit" value="Select" class="btn btn-toggle">
+            </form>
+          </th>
+          <th scope="col"></th>
+        </tr>
+
         <tr>
           <th scope="col">#</th>
           <th scope="col">Created On</th>
@@ -46,24 +79,28 @@
         </tr>
       </thead>
       <tbody>
-        {% for sbn in sbn_jackpot %}
-        {% if sbn.is_admin == false and sbn.is_active == true %}
+        {% for data in sbn_members %}
         <tr>
           <th scope="row">{{loop.index}}</th>
-          <td>{{sbn.created_date}}</td>
-          <td>{{sbn.active_date}}</td>
-          <td class='col-auto'>{{sbn.username}}</td>
-          <td>{{sbn.full_name}}</td>
+          <td>{{data.created_date}}</td>
+          <td>{{data.active_date}}</td>
+          <td class='col-auto'>{{data.username}}</td>
+          <td>{{data.full_name}}</td>
           
           <td>
-              {% for pkg in sbn.packages %}
-              {{pkg.package_id}}<br>
-              {% endfor %}
+            {% for pkg in data.packages %}
+            {{pkg}}<br>
+            {% endfor %}
           </td>
           
-          <td><button type="submit" class="btn btn-primary mb-2" value="{{sbn._id}}">Load</button></td>
+          <td>
+
+            <form method="POST" action="{{ url_for('jackpot_load', uxr=data.username,pack=pkg) }}">
+              {{ form.csrf_token }}
+              {{form.load(class='btn btn-primary')}}
+            </form>
+          </td>
         </tr>
-        {% endif %}
         {% endfor %}
 
       </tbody>

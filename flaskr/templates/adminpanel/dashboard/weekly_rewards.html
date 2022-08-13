@@ -48,19 +48,19 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for sbn in sbn_weekly %}
+				{% for data in sbn_members %}
 				
 				<tr>
 					<th scope="row">{{loop.index}}</th>
-					<!-- <td>{{sbn.created_date}}</td> -->
-					<td>{{sbn.active_date}}</td>
-					<td >{{sbn.username}}</td>
-					<td>{{sbn.full_name}}</td>
+					<!-- <td>{{data.created_date}}</td> -->
+					<td>{{data.active_date}}</td>
+					<td >{{data.username}}</td>
+					<td>{{data.full_name}}</td>
 					
 					<td class='col-auto'>
-						{% for pkg in sbn.packages %}
-						{{pkg.package_id}}<br>
-						{% endfor %}
+						{% for pkg in data.packages %}
+            			{{pkg}}<br>
+            			{% endfor %}
 					</td>
 					
 					

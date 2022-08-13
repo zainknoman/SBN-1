@@ -1,7 +1,8 @@
 from flask import Flask, render_template, url_for, request, flash, redirect, session
 from forms import (RegistrationForm, LoginForm, ForgotPwdForm, ForgotUsrForm, ProfileForm, 
     AnnouncementsForm, PackageConfigForm, RewardConfigForm, WalletConfigForm, WeeklyRewardForm,
-    MemberManager, AdminManager, AdminUsers)
+    MemberManager, AdminManager, AdminUsers,
+    JackpotForm, MonthlyRewardForm)
 from flask_pymongo import PyMongo
 from flask_wtf.csrf import CSRFProtect
 from bson.objectid import ObjectId
@@ -106,8 +107,11 @@ def get_memberManager(todo):
         sbn_data = dal.sbn_users.find({'$and':[{'is_admin':{'$eq':False}},{'is_active':{'$eq':True}}]})
     return sbn_data 
 
-def get_activeMembers():
-    sbn_data = dal.sbn_users.find({'$and':[{'is_admin':{'$eq':False}},{'is_active':{'$eq':True}}]})
+def get_activeMembers(pkg):
+    if pkg:
+        sbn_data = dal.sbn_users.find({'$and':[{'is_admin':{'$eq':False}},{'is_active':{'$eq':True}},{'packages':{'$in':[pkg]}}]})
+    else:
+        sbn_data = dal.sbn_users.find({'$and':[{'is_admin':{'$eq':False}},{'is_active':{'$eq':True}}]})
     return sbn_data
 
 def get_announcements():
@@ -170,9 +174,75 @@ def getMember_Id(ob):
     user = dal.sbn_users.find_one({'_id':ObjectId(ob), 'is_admin':False})
     return user
 
+def reg_weekly(sbn_members,percentage):
+    display = False
+    reward = 0
+    for data in sbn_members:
+        username = data['username']
+        packages = data['packages']
+        for pkg in packages:
+            package_amount = pkg[3:]
+            reward += float(int(package_amount)*int(percentage)/100)
+            
+        try:
+            dal.sbn_users.update_one({'username':username},{'$set':{'weekly_reward':float(reward)}})
+            reward = 0
+            display = True
+        except Exception as e:
+            display = False
+            flash("Something went wrong!","error")
 
+    return display
 
+def reg_jackpot(uxr,pkg,amt):
+    display = False
+    currentMonth = datetime.now().month
+    
+    if currentMonth >= 10 and currentMonth <= 12:
+        currentQuarter = 4
+        # currentMonth = Oct
+        nextQuarter = 1
+        nextMonth = 1
+    if currentMonth >= 7 and currentMonth <= 9:
+        currentQuarter = 3
+        # currentMonth = July
+        nextQuarter = 4
+        nextMonth = 10
+    if currentMonth >= 4 and currentMonth <= 6:
+        currentQuarter = 2
+        # currentMonth = Apr
+        nextQuarter = 3
+        nextMonth = 7
+    if currentMonth >= 1 and currentMonth <= 3:
+        currentQuarter = 1
+        # currentMonth = jan
+        nextQuarter = 2
+        nextMonth = 4
 
+    jack_data = dal.jackpot_data.find_one({'status':True})
+    if jack_data:
+        current_quarter = jack_data['current_quarter']
+    else:
+        current_quarter = 0
+    
+    if current_quarter != currentQuarter:
+        user_data = dal.sbn_users.find_one({'username':uxr})
+        email_address = user_data['email_address']
+        
+        try:
+            dal.jackpot_data.delete_many({})
+            dal.jackpot_history.update_many({'status':{'$eq':True}},{'$set':{'status':False}})
+            dal.jackpot_data.insert_one({'createdDate':datetime.now().replace(microsecond=0),'current_quarter':currentQuarter,'username':uxr,'email_address':email_address,'package_id':pkg,'amount':float(amt),'status':True})
+            dal.jackpot_history.insert_one({'createdDate':datetime.now().replace(microsecond=0),'current_quarter':currentQuarter,'username':uxr,'email_address':email_address,'package_id':pkg,'amount':float(amt),'status':True})
+            dal.sbn_users.update_one({'username':uxr},{'$set':{'jackpot_reward':float(amt)}})
+            display = True
+
+        except Exception as e:
+            flash(e,"error")
+            flash("Something went wrong!","error")    
+    else:
+        flash("Jackpot already registerd for this quarter!","error")
+    return display
 
 # @login_manager.user_loader
 def load_user(email):
@@ -548,18 +618,40 @@ def wallet_load(wallet):
 @app.route('/weekly_reward/', methods=['GET','POST'])
 def weekly_reward():
     form = WeeklyRewardForm()
-    sbn_weekly = get_activeMembers()
+    sbn_members = get_activeMembers(None)
     reward_weekly = dal.reward_config.find_one({'reward':'Weekly'})
     if reward_weekly:
         form.percentage.data = reward_weekly['percentage']
-    return render_template('/adminpanel/dashboard/weekly_rewards.html', title='Weekly Rewards', sbn_weekly=sbn_weekly, form=form)
+
+    display = None
+    if request.method == "POST":
+        if form.validate_on_submit():
+            if form.submit.data:
+                display = reg_weekly(sbn_members,form.percentage.data)
+
+    if display == True:            
+        flash("Weekly reward has been registered for all users!","success")
+
+    sbn_members = get_activeMembers(None)
+    return render_template('/adminpanel/dashboard/weekly_rewards.html', title='Weekly Rewards', sbn_members=sbn_members, form=form)
 
 @app.route('/monthly_reward/', methods=['GET','POST'])
 def monthly_reward():
-    form = RewardConfigForm()
+    form = MonthlyRewardForm()
+    # form.submit.render_kw = {'disabled':'disabled'}
+    form.load.render_kw = {'disabled':'disabled'}
+    pkg = request.args.get("pack")
+    if pkg:
+        form.load.render_kw = {'enabled':'enabled'}
+    
+    reward_monthly = dal.reward_config.find_one({'reward':'Monthly'})
+    if reward_monthly:
+        form.percentage.data = reward_monthly['percentage']
+
+
+    sbn_members = get_activeMembers(pkg)
     sbn_packages = dal.sbn_packages.find()
-    sbn_monthly = get_activeMembers()
-    return render_template('/adminpanel/dashboard/monthly_rewards.html', title='Monthly Rewards', form=form, sbn_packages = sbn_packages, sbn_monthly=sbn_monthly)
+    return render_template('/adminpanel/dashboard/monthly_rewards.html', title='Monthly Rewards',pkg=pkg, sbn_members=sbn_members, sbn_packages=sbn_packages, form=form)
 
 @app.route('/direct_reward/', methods=['GET','POST'])
 def direct_reward():
@@ -569,10 +661,54 @@ def direct_reward():
 
 @app.route('/jackpot/', methods=['GET','POST'])
 def jackpot():
-    reg_form = RegistrationForm()
-    # sbn_jackpot = dal.sbn_users.find({'is_active':'true','is_admin':'false'})
-    sbn_jackpot = get_activeMembers()
-    return render_template('/adminpanel/dashboard/jackpot.html', title='Jackpot', sbn_jackpot=sbn_jackpot, reg_form=reg_form)
+    form = JackpotForm()
+    form.submit.render_kw = {'disabled':'disabled'}
+    form.load.render_kw = {'disabled':'disabled'}
+    pkg = request.args.get("pack")
+    if pkg:
+        form.load.render_kw = {'enabled':'enabled'}
+    sbn_members = get_activeMembers(pkg)
+    sbn_packages = dal.sbn_packages.find()
+
+    return render_template('/adminpanel/dashboard/jackpot.html', title='Jackpot',pkg=pkg, sbn_members=sbn_members,sbn_packages=sbn_packages, form=form)
+
+@app.route('/jackpot_load/<uxr>', methods=['GET','POST'])
+def jackpot_load(uxr):
+
+    form = JackpotForm()
+    form.submit.render_kw = {'enabled':'enabled'}
+    pkg = request.args.get('pack')
+    form.username.label.text = str(uxr)
+    form.username.data = str(uxr)
+    if pkg:
+        form.pkg_amount.label.text = pkg[3:]
+        form.pkg_amount.data = pkg[3:]
+
+    if request.method == "POST":
+        if form.validate_on_submit():
+            if form.submit.data:
+                if form.username.data:
+                    pass
+                else:    
+                    flash("Please load the desired member","error")
+                if form.pkg_amount.data:
+                    pass
+                else:
+                    flash("Please select the package","error")
+                if form.multiplier.data:
+                    jack_amount = float(form.multiplier.data)*int(form.pkg_amount.data)
+                    display = reg_jackpot(uxr,pkg,jack_amount)
+                    if display == True:
+                        flash("Jackpot successfully registered against "+uxr,"success")
+                else:
+                    flash("Please enter no. of terms","error")
+                
+
+    sbn_members = get_activeMembers(pkg)
+    sbn_packages = dal.sbn_packages.find()
+
+    return render_template('/adminpanel/dashboard/jackpot.html', title='Jackpot', sbn_members=sbn_members,sbn_packages=sbn_packages, form=form)
+
 
 @app.route('/verify/')
 def verify_usr():

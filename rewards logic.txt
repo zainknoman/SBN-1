@@ -1,0 +1,19 @@
+weekly reward to all active members 
+2% (configured) of package amount in total
+ex:
+pkg500 + pkg1000 = total package amt 1500
+
+2*1500/100 = weekly reward
+
+direct member reward to all active members display members whose reffered other members
+50% flat earning from that they refered from their weekly profit
+
+ex:
+member A reffered member B
+B has pkg1000
+then his weekly reward is 2%of 1000 = 20
+then A earned 50%of 20
+
+monthly reward is 100% of pkg amount
+A has pkg1000 
+then monthly lucky draw will be 100% = 1000
